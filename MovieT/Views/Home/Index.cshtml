@@ -1,0 +1,38 @@
+﻿@model List<string>
+
+<h1>Top 10 Trending</h1>
+
+<div>
+    <a href="/?filter=alles">Alles</a> |
+    <a href="/?filter=films">Films</a> |
+    <a href="/?filter=series">Series</a> |
+    @if (ViewBag.Filter == "genre")
+    {
+        <a href="/?filter=alles">Genre ▲</a>
+    }
+    else
+    {
+        <a href="/?filter=genre">Genre ▼</a>
+    }
+</div>
+
+@if (ViewBag.Filter == "genre")
+{
+    <div>
+        @foreach (var genre in ViewBag.Genres)
+        {
+            <a href="/?filter=genre&genre=@genre">@genre</a>
+        }
+    </div>
+}
+
+<ul>
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        var parts = Model[i].Split('|');
+        <li>
+            <strong>#@(i + 1)</strong>
+            [@parts[0]] @parts[1]
+        </li>
+    }
+</ul>
