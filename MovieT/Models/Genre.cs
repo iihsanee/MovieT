@@ -1,26 +1,16 @@
 ﻿namespace MovieT.Models
 {
-    public class Genre
-    {
-        namespace MovieT.Models
-    {
-        public class Genre
+     public class Genre
         {
-            public int Id { get; set; }
-            public string Lijst { get; set; } = string.Empty;
-            public string Naam { get; set; } = string.Empty;
+        public int ID { get; set; }   //
+        public string Lijst { get; set; } = string.Empty;
+         public string Naam { get; set; } = string.Empty;
 
-            public string Gettitel()
+         public string Getnaam()
             {
-                return Titel;
+                return Naam;
             }
-
-            public string GetBeschrijving()
-            {
-                return Beschrijving;
+            
             }
         }
-    }
-
-}
-}
+   

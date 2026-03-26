@@ -1,6 +1,11 @@
-﻿@model List<string>
+﻿@using MovieT.Models
 
 <h1>Top 10 Trending</h1>
+
+<form method="get" action="/">
+    <input type="text" name="zoekterm" value="@ViewBag.Zoekterm" placeholder="Zoek films of series..." />
+    <button type="submit">Zoeken</button>
+</form>
 
 <div>
     <a href="/?filter=alles">Alles</a> |
@@ -21,18 +26,18 @@
     <div>
         @foreach (var genre in ViewBag.Genres)
         {
-            <a href="/?filter=genre&genre=@genre">@genre</a>
+            <a href="/?filter=genre&genre=@genre.Naam">@genre.Naam</a>
         }
     </div>
 }
 
 <ul>
-    @for (int i = 0; i < Model.Count; i++)
+    @foreach (Film film in ViewBag.Films)
     {
-        var parts = Model[i].Split('|');
-        <li>
-            <strong>#@(i + 1)</strong>
-            [@parts[0]] @parts[1]
-        </li>
+        <li>[FILM] @film.Titel</li>
+    }
+    @foreach (Serie serie in ViewBag.Series)
+    {
+        <li>[SERIE] @serie.Titel</li>
     }
 </ul>
