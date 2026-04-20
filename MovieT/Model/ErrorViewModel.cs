@@ -1,4 +1,4 @@
-namespace MovieT.Models
+﻿namespace MovieT.Models
 {
     public class ErrorViewModel
     {

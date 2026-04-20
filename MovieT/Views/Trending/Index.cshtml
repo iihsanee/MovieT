@@ -1,0 +1,10 @@
+﻿@model List<MovieT.ViewModels.TrendingViewModel>
+<h1>Top 10 Trending</h1>
+<ol>
+    @foreach (var item in Model)
+    {
+        <li>
+            <strong>@item.Title</strong> - @item.Type
+        </li>
+    }
+</ol>

@@ -1,0 +1,22 @@
+﻿@model MovieT.ViewModels.UserViewModel
+<h1>Profiel van @Model.Naam</h1>
+
+<h2>Watching List</h2>
+<ul>
+    @foreach (var item in Model.WatchingList)
+    {
+        <li>
+            <strong>@item.Title</strong> - @item.Type
+        </li>
+    }
+</ul>
+
+<h2>Watched List</h2>
+<ul>
+    @foreach (var item in Model.WatchedList)
+    {
+        <li>
+            <strong>@item.Title</strong> - @item.Type
+        </li>
+    }
+</ul>

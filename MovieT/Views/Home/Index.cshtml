@@ -1,43 +1,7 @@
-﻿@using MovieT.Models
+﻿<h1>Welkom bij MovieT</h1>
 
-<h1>Top 10 Trending</h1>
+<p>Bekijk de trending FilmModels en SerieModels of zoek naar jouw favoriete FilmModel of SerieModel.</p>
 
-<form method="get" action="/">
-    <input type="text" name="zoekterm" value="@ViewBag.Zoekterm" placeholder="Zoek films of series..." />
-    <button type="submit">Zoeken</button>
-</form>
-
-<div>
-    <a href="/?filter=alles">Alles</a> |
-    <a href="/?filter=films">Films</a> |
-    <a href="/?filter=series">Series</a> |
-    @if (ViewBag.Filter == "genre")
-    {
-        <a href="/?filter=alles">Genre ▲</a>
-    }
-    else
-    {
-        <a href="/?filter=genre">Genre ▼</a>
-    }
-</div>
-
-@if (ViewBag.Filter == "genre")
-{
-    <div>
-        @foreach (var genre in ViewBag.Genres)
-        {
-            <a href="/?filter=genre&genre=@genre.Naam">@genre.Naam</a>
-        }
-    </div>
-}
-
-<ul>
-    @foreach (Film film in ViewBag.Films)
-    {
-        <li>[FILM] @film.Titel</li>
-    }
-    @foreach (Serie serie in ViewBag.Series)
-    {
-        <li>[SERIE] @serie.Titel</li>
-    }
-</ul>
+<a href="/Trending">Bekijk Top 10 Trending</a> |
+<a href="/FilmModel">Bekijk FilmModels</a> |
+<a href="/SerieModel">Bekijk SerieModels</a>

@@ -1,0 +1,8 @@
+﻿@model List<MovieT.ViewModels.GenreViewModel>
+<h1>Genres</h1>
+<ul>
+    @foreach (var genre in Model)
+    {
+        <li>@genre.Naam</li>
+    }
+</ul>

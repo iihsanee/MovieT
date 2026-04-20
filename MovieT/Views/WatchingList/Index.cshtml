@@ -1,0 +1,17 @@
+﻿@model List<MovieT.ViewModels.WatchingListViewModel>
+<h1>Mijn Watching List</h1>
+<ul>
+    @foreach (var item in Model)
+    {
+        <li>
+            <strong>@item.Title</strong> - @item.Type
+            <a asp-controller="WatchingList" asp-action="MoveToWatched"
+               asp-route-filmId="@item.FilmId"
+               asp-route-serieId="@item.SerieId"
+               asp-route-title="@item.Title"
+               asp-route-type="@item.Type">
+                Mark as Watched
+            </a>
+        </li>
+    }
+</ul>

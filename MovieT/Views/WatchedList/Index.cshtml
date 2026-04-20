@@ -1,0 +1,10 @@
+﻿@model List<MovieT.ViewModels.WatchedListViewModel>
+<h1>Mijn Watched List</h1>
+<ul>
+    @foreach (var item in Model)
+    {
+        <li>
+            <strong>@item.Title</strong> - @item.Type
+        </li>
+    }
+</ul>

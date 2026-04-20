@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="DAL/DAL.csproj" Id="a5b07e6c-0cd0-4be4-9683-ba866e2a8272" />
   <Project Path="MovieT/MovieT.csproj" />
+  <Project Path="serviceLibary/serviceLibary.csproj" Id="98ecdde2-8f84-4f1c-9d25-39b25227aaa8" />
 </Solution>
