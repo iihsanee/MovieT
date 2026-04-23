@@ -6,7 +6,7 @@ namespace MovieT.Controllers
     {
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "FilmModel");
+            return RedirectToAction("Index", "Film");
         }
     }
 }

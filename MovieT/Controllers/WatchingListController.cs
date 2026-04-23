@@ -11,9 +11,13 @@ namespace MovieT.Controllers
         private List<WatchingListViewModel> GetWatchingList()
         {
             var json = HttpContext.Session.GetString("WatchingList");
+
             if (json == null)
+            {
                 return new List<WatchingListViewModel>();
-            return JsonSerializer.Deserialize<List<WatchingListViewModel>>(json);
+            }
+
+            return JsonSerializer.Deserialize<List<WatchingListViewModel>>(json) ?? new List<WatchingListViewModel>();
         }
 
         private void SaveWatchingList(List<WatchingListViewModel> list)
@@ -30,6 +34,7 @@ namespace MovieT.Controllers
         public IActionResult AddFilm(int userId, int filmId, string title)
         {
             var list = GetWatchingList();
+
             if (!list.Exists(x => x.FilmId == filmId))
             {
                 list.Add(new WatchingListViewModel
@@ -39,14 +44,18 @@ namespace MovieT.Controllers
                     Title = title,
                     Type = "Film"
                 });
+
                 SaveWatchingList(list);
             }
-            return RedirectToAction("Index", "FilmModel");
+
+            
+            return RedirectToAction("Index", "Film");
         }
 
         public IActionResult AddSerie(int userId, int serieId, string title)
         {
             var list = GetWatchingList();
+
             if (!list.Exists(x => x.SerieId == serieId))
             {
                 list.Add(new WatchingListViewModel
@@ -56,20 +65,35 @@ namespace MovieT.Controllers
                     Title = title,
                     Type = "Serie"
                 });
+
                 SaveWatchingList(list);
             }
+
             return RedirectToAction("Index", "Serie");
         }
 
         public IActionResult MoveToWatched(int? filmId, int? serieId, string title, string type)
         {
             var list = GetWatchingList();
+
             if (filmId.HasValue)
+            {
                 list.RemoveAll(x => x.FilmId == filmId);
+            }
             else if (serieId.HasValue)
+            {
                 list.RemoveAll(x => x.SerieId == serieId);
+            }
+
             SaveWatchingList(list);
-            return RedirectToAction("Add", "WatchedList", new { filmId = filmId, serieId = serieId, title = title, type = type });
+
+            return RedirectToAction("Add", "WatchedList", new
+            {
+                filmId = filmId,
+                serieId = serieId,
+                title = title,
+                type = type
+            });
         }
     }
 }

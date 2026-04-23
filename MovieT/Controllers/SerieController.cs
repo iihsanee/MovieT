@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using serviceLibary.Services;
 using MovieT.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
+using DAL.Repositories;
 
 namespace MovieT.Controllers
 {
@@ -11,10 +13,16 @@ namespace MovieT.Controllers
         private readonly SerieService _serieService;
         private readonly GenreService _genreService;
 
-        public SerieController(SerieService serieService, GenreService genreService)
+        public SerieController(IConfiguration configuration)
         {
-            _serieService = serieService;
-            _genreService = genreService;
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new System.Exception("ConnectionString 'DefaultConnection' not found");
+
+            var serieRepo = new SerieRepository(connectionString);
+            var genreRepo = new GenreRepository(connectionString);
+
+            _serieService = new SerieService(serieRepo);
+            _genreService = new GenreService(genreRepo);
         }
 
         public IActionResult Index(int? genreId)
@@ -22,10 +30,12 @@ namespace MovieT.Controllers
             var series = _serieService.GetAll();
             var allGenres = _genreService.GetAll();
             var viewModels = new List<SerieViewModel>();
+
             foreach (var serie in series)
             {
                 var genres = _genreService.GetBySerieId(serie.Id);
-                if (genreId == null || genres.Contains(_genreService.GetById(genreId.Value)?.Naam))
+
+                if (genreId == null || genres.Contains(_genreService.GetById(genreId.Value)?.Naam ?? string.Empty))
                 {
                     if (!viewModels.Any(v => v.Id == serie.Id))
                     {
@@ -41,16 +51,20 @@ namespace MovieT.Controllers
                     }
                 }
             }
+
             ViewBag.Genres = allGenres;
             ViewBag.SelectedGenre = genreId;
+
             return View(viewModels);
         }
 
         public IActionResult Details(int id)
         {
             var serie = _serieService.GetById(id);
+
             if (serie == null)
                 return NotFound();
+
             var viewModel = new SerieViewModel
             {
                 Id = serie.Id,
@@ -59,6 +73,7 @@ namespace MovieT.Controllers
                 Duration = serie.Duration,
                 Description = serie.Description
             };
+
             return View(viewModel);
         }
 
@@ -67,9 +82,11 @@ namespace MovieT.Controllers
             var series = _serieService.Search(query);
             var allGenres = _genreService.GetAll();
             var viewModels = new List<SerieViewModel>();
+
             foreach (var serie in series)
             {
                 var genres = _genreService.GetBySerieId(serie.Id);
+
                 if (!viewModels.Any(v => v.Id == serie.Id))
                 {
                     viewModels.Add(new SerieViewModel
@@ -83,8 +100,10 @@ namespace MovieT.Controllers
                     });
                 }
             }
+
             ViewBag.Genres = allGenres;
             ViewBag.SelectedGenre = null;
+
             return View("Index", viewModels);
         }
 

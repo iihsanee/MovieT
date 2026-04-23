@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace serviceLibary.Models
 {
@@ -9,6 +10,8 @@ namespace serviceLibary.Models
         public DateTime ReleaseDate { get; }
         public TimeSpan Duration { get; }
         public string Description { get; }
+        public List<WatchingListModel> WatchingLists { get; }
+        public List<WatchedListModel> WatchedLists { get; }
 
         public SerieModel(int id, string title, DateTime releaseDate, TimeSpan duration, string description)
         {
@@ -17,6 +20,8 @@ namespace serviceLibary.Models
             ReleaseDate = releaseDate;
             Duration = duration;
             Description = description;
+            WatchingLists = new List<WatchingListModel>();
+            WatchedLists = new List<WatchedListModel>();
         }
     }
 }

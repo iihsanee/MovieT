@@ -2,7 +2,12 @@
 {
     public class UserDTO
     {
-        public int Id { get; set; }
-        public string Naam { get; set; }
+        public int Id { get; }
+        public string Naam { get; } = string.Empty;
+        public UserDTO(int id, string naam)
+        {
+            Id = id;
+            Naam = naam;
+        }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using serviceLibary.Services;
 using MovieT.ViewModels;
 using System.Collections.Generic;
+using DAL.Repositories;
 
 namespace MovieT.Controllers
 {
@@ -9,15 +11,20 @@ namespace MovieT.Controllers
     {
         private readonly GenreService _genreService;
 
-        public GenreController(GenreService genreService)
+        public GenreController(IConfiguration configuration)
         {
-            _genreService = genreService;
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new System.Exception("ConnectionString 'DefaultConnection' not found");
+
+            var genreRepo = new GenreRepository(connectionString);
+            _genreService = new GenreService(genreRepo);
         }
 
         public IActionResult Index()
         {
             var genres = _genreService.GetAll();
             var viewModels = new List<GenreViewModel>();
+
             foreach (var genre in genres)
             {
                 viewModels.Add(new GenreViewModel
@@ -26,6 +33,7 @@ namespace MovieT.Controllers
                     Naam = genre.Naam
                 });
             }
+
             return View(viewModels);
         }
     }

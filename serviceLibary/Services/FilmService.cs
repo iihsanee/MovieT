@@ -14,9 +14,9 @@ namespace serviceLibary.Services
             _repository = repository;
         }
 
-        public FilmModelModel GetById(int id)
+        public FilmModelModel? GetById(int id)
         {
-            FilmModelDTO dto = _repository.GetById(id);
+            FilmModelDTO? dto = _repository.GetById(id);
             if (dto == null)
                 return null;
             return new FilmModelModel(

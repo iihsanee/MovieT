@@ -13,7 +13,7 @@ namespace serviceLibary.Services
             _repository = repository;
         }
 
-        public UserModel GetById(int id)
+        public UserModel? GetById(int id)
         {
             var dto = _repository.GetById(id);
             if (dto == null)

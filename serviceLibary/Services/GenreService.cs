@@ -25,9 +25,9 @@ namespace serviceLibary.Services
             return models;
         }
 
-        public GenreModel GetById(int id)
+        public GenreModel? GetById(int id)
         {
-            GenreDTO dto = _repository.GetById(id);
+            GenreDTO? dto = _repository.GetById(id);
             if (dto == null)
                 return null;
             return new GenreModel(dto.Id, dto.Naam);

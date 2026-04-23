@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using serviceLibary.Services;
 using MovieT.ViewModels;
 using System.Collections.Generic;
+using System.Linq;
+using DAL.Repositories;
 
 namespace MovieT.Controllers
 {
@@ -10,10 +13,16 @@ namespace MovieT.Controllers
         private readonly FilmModel _filmService;
         private readonly SerieService _serieService;
 
-        public TrendingController(FilmModel filmService, SerieService serieService)
+        public TrendingController(IConfiguration configuration)
         {
-            _filmService = filmService;
-            _serieService = serieService;
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new System.Exception("ConnectionString 'DefaultConnection' not found");
+
+            var filmRepo = new FilmModelRepository(connectionString);
+            var serieRepo = new SerieRepository(connectionString);
+
+            _filmService = new FilmModel(filmRepo);
+            _serieService = new SerieService(serieRepo);
         }
 
         public IActionResult Index()
@@ -44,6 +53,7 @@ namespace MovieT.Controllers
             }
 
             viewModels = viewModels.Take(10).ToList();
+
             return View(viewModels);
         }
     }

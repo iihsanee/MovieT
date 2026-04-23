@@ -6,7 +6,7 @@ namespace DAL.Repositories
     public interface IFilmModelRepository
     {
         List<FilmModelDTO> GetAll();
-        FilmModelDTO GetById(int id);
+        FilmModelDTO? GetById(int id);
         List<FilmModelDTO> Search(string query);
         void AddToWatchingList(int userId, int FilmModelId);
         void AddToWatchedList(int userId, int FilmModelId);

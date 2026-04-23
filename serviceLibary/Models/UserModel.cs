@@ -2,8 +2,8 @@
 {
     public class UserModel
     {
-        public int Id { get; set; }
-        public string Naam { get; set; }
+        public int Id { get; }
+        public string Naam { get; }
 
         public UserModel(int id, string naam)
         {

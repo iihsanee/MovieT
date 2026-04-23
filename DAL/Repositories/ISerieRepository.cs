@@ -6,7 +6,7 @@ namespace DAL.Repositories
     public interface ISerieRepository
     {
         List<SerieDTO> GetAll();
-        SerieDTO GetById(int id);
+        SerieDTO? GetById(int id);
         List<SerieDTO> Search(string query);
         void AddToWatchingList(int userId, int SerieId);
         void AddToWatchedList(int userId, int SerieId);

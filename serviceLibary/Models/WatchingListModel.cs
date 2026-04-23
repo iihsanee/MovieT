@@ -2,11 +2,11 @@
 {
     public class WatchingListModel
     {
-        public int UserId { get; set; }
-        public int? FilmId { get; set; }
-        public int? SerieId { get; set; }
-        public string Title { get; set; }
-        public string Type { get; set; }
+        public int UserId { get; }
+        public int? FilmId { get; }
+        public int? SerieId { get; }
+        public string Title { get; }
+        public string Type { get; }
 
         public WatchingListModel(int userId, int? filmId, int? serieId, string title, string type)
         {

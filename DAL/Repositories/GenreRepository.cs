@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using DAL.DTO;
 
@@ -24,17 +23,16 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    genres.Add(new GenreDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Naam = reader["Naam"].ToString()
-                    });
+                    genres.Add(new GenreDTO(
+                        (int)reader["ID"],
+                        reader["Naam"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return genres;
         }
 
-        public GenreDTO GetById(int id)
+        public GenreDTO? GetById(int id)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -44,11 +42,10 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    return new GenreDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Naam = reader["Naam"].ToString()
-                    };
+                    return new GenreDTO(
+                        (int)reader["ID"],
+                        reader["Naam"]?.ToString() ?? string.Empty
+                    );
                 }
             }
             return null;
@@ -68,11 +65,10 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    genres.Add(new GenreDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Naam = reader["Naam"].ToString()
-                    });
+                    genres.Add(new GenreDTO(
+                        (int)reader["ID"],
+                        reader["Naam"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return genres;
@@ -92,11 +88,10 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    genres.Add(new GenreDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Naam = reader["Naam"].ToString()
-                    });
+                    genres.Add(new GenreDTO(
+                        (int)reader["ID"],
+                        reader["Naam"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return genres;

@@ -16,7 +16,7 @@ namespace DAL.Repositories
 
         public List<FilmModelDTO> GetAll()
         {
-            var FilmModels = new List<FilmModelDTO>();
+            var filmModels = new List<FilmModelDTO>();
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 con.Open();
@@ -24,20 +24,19 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    FilmModels.Add(new FilmModelDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    });
+                    filmModels.Add(new FilmModelDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
-            return FilmModels;
+            return filmModels;
         }
 
-        public FilmModelDTO GetById(int id)
+        public FilmModelDTO? GetById(int id)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -47,14 +46,13 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    return new FilmModelDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    };
+                    return new FilmModelDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    );
                 }
             }
             return null;
@@ -62,7 +60,7 @@ namespace DAL.Repositories
 
         public List<FilmModelDTO> Search(string query)
         {
-            var FilmModels = new List<FilmModelDTO>();
+            var filmModels = new List<FilmModelDTO>();
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 con.Open();
@@ -71,46 +69,45 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    FilmModels.Add(new FilmModelDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    });
+                    filmModels.Add(new FilmModelDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
-            return FilmModels;
+            return filmModels;
         }
 
-        public void AddToWatchingList(int userId, int FilmModelId)
+        public void AddToWatchingList(int userId, int filmModelId)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO WatchingList (UserID, FilmModelID) VALUES (@userId, @FilmModelId)", con);
+                SqlCommand cmd = new SqlCommand("INSERT INTO WatchingList (UserID, FilmModelID) VALUES (@userId, @filmModelId)", con);
                 cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.AddWithValue("@FilmModelId", FilmModelId);
+                cmd.Parameters.AddWithValue("@filmModelId", filmModelId);
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public void AddToWatchedList(int userId, int FilmModelId)
+        public void AddToWatchedList(int userId, int filmModelId)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO WatchedList (UserID, FilmModelID) VALUES (@userId, @FilmModelId)", con);
+                SqlCommand cmd = new SqlCommand("INSERT INTO WatchedList (UserID, FilmModelID) VALUES (@userId, @filmModelId)", con);
                 cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.AddWithValue("@FilmModelId", FilmModelId);
+                cmd.Parameters.AddWithValue("@filmModelId", filmModelId);
                 cmd.ExecuteNonQuery();
             }
         }
 
         public List<FilmModelDTO> GetWatchingList(int userId)
         {
-            var FilmModels = new List<FilmModelDTO>();
+            var filmModels = new List<FilmModelDTO>();
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 con.Open();
@@ -123,22 +120,21 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    FilmModels.Add(new FilmModelDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    });
+                    filmModels.Add(new FilmModelDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
-            return FilmModels;
+            return filmModels;
         }
 
         public List<FilmModelDTO> GetWatchedList(int userId)
         {
-            var FilmModels = new List<FilmModelDTO>();
+            var filmModels = new List<FilmModelDTO>();
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 con.Open();
@@ -151,17 +147,16 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    FilmModels.Add(new FilmModelDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    });
+                    filmModels.Add(new FilmModelDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
-            return FilmModels;
+            return filmModels;
         }
 
         public List<FilmModelDTO> GetTop10Trending()
@@ -179,14 +174,13 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    films.Add(new FilmModelDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        Description = reader["Beschrijving"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"]
-                    });
+                    films.Add(new FilmModelDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return films;

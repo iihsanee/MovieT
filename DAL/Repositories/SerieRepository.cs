@@ -24,20 +24,19 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    series.Add(new SerieDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    });
+                    series.Add(new SerieDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return series;
         }
 
-        public SerieDTO GetById(int id)
+        public SerieDTO? GetById(int id)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -47,14 +46,13 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    return new SerieDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    };
+                    return new SerieDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    );
                 }
             }
             return null;
@@ -71,39 +69,38 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    series.Add(new SerieDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    });
+                    series.Add(new SerieDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return series;
         }
 
-        public void AddToWatchingList(int userId, int SerieId)
+        public void AddToWatchingList(int userId, int serieId)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO WatchingList (UserID, SerieID) VALUES (@userId, @SerieId)", con);
+                SqlCommand cmd = new SqlCommand("INSERT INTO WatchingList (UserID, SerieID) VALUES (@userId, @serieId)", con);
                 cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.AddWithValue("@SerieId", SerieId);
+                cmd.Parameters.AddWithValue("@serieId", serieId);
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public void AddToWatchedList(int userId, int SerieId)
+        public void AddToWatchedList(int userId, int serieId)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO WatchedList (UserID, SerieID) VALUES (@userId, @SerieId)", con);
+                SqlCommand cmd = new SqlCommand("INSERT INTO WatchedList (UserID, SerieID) VALUES (@userId, @serieId)", con);
                 cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.AddWithValue("@SerieId", SerieId);
+                cmd.Parameters.AddWithValue("@serieId", serieId);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -123,14 +120,13 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    series.Add(new SerieDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    });
+                    series.Add(new SerieDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return series;
@@ -151,14 +147,13 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    series.Add(new SerieDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"],
-                        Description = reader["Beschrijving"].ToString()
-                    });
+                    series.Add(new SerieDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return series;
@@ -179,14 +174,13 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    series.Add(new SerieDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Title = reader["Titel"].ToString(),
-                        Description = reader["Beschrijving"].ToString(),
-                        ReleaseDate = (DateTime)reader["ReleaseDate"],
-                        Duration = (TimeSpan)reader["Duration"]
-                    });
+                    series.Add(new SerieDTO(
+                        (int)reader["ID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        (DateTime)reader["ReleaseDate"],
+                        (TimeSpan)reader["Duration"],
+                        reader["Beschrijving"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return series;

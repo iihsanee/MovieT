@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using serviceLibary.Services;
 using MovieT.ViewModels;
 using System.Collections.Generic;
 using System.Text.Json;
+using DAL.Repositories;
 
 namespace MovieT.Controllers
 {
@@ -11,9 +13,13 @@ namespace MovieT.Controllers
     {
         private readonly UserService _userService;
 
-        public UserController(UserService userService)
+        public UserController(IConfiguration configuration)
         {
-            _userService = userService;
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new System.Exception("ConnectionString 'DefaultConnection' not found");
+
+            var userRepo = new UserRepository(connectionString);
+            _userService = new UserService(userRepo);
         }
 
         public IActionResult Index()
@@ -22,12 +28,20 @@ namespace MovieT.Controllers
             var watchingListJson = HttpContext.Session.GetString("WatchingList");
             var watchedListJson = HttpContext.Session.GetString("WatchedList");
 
+            var watchingList = watchingListJson != null
+                ? JsonSerializer.Deserialize<List<WatchingListViewModel>>(watchingListJson) ?? new List<WatchingListViewModel>()
+                : new List<WatchingListViewModel>();
+
+            var watchedList = watchedListJson != null
+                ? JsonSerializer.Deserialize<List<WatchedListViewModel>>(watchedListJson) ?? new List<WatchedListViewModel>()
+                : new List<WatchedListViewModel>();
+
             var viewModel = new UserViewModel
             {
                 Id = user?.Id ?? 1,
                 Naam = user?.Naam ?? "Gebruiker",
-                WatchingList = watchingListJson != null ? JsonSerializer.Deserialize<List<WatchingListViewModel>>(watchingListJson) : new List<WatchingListViewModel>(),
-                WatchedList = watchedListJson != null ? JsonSerializer.Deserialize<List<WatchedListViewModel>>(watchedListJson) : new List<WatchedListViewModel>()
+                WatchingList = watchingList,
+                WatchedList = watchedList
             };
 
             return View(viewModel);

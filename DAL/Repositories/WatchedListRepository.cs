@@ -31,14 +31,13 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    items.Add(new WatchedListDTO
-                    {
-                        UserId = (int)reader["UserID"],
-                        FilmId = reader["FilmModelID"] == DBNull.Value ? null : (int?)reader["FilmModelID"],
-                        SerieId = reader["SerieID"] == DBNull.Value ? null : (int?)reader["SerieID"],
-                        Title = reader["Titel"].ToString(),
-                        Type = reader["Type"].ToString()
-                    });
+                    items.Add(new WatchedListDTO(
+                        (int)reader["UserID"],
+                        reader["FilmModelID"] == DBNull.Value ? null : (int?)reader["FilmModelID"],
+                        reader["SerieID"] == DBNull.Value ? null : (int?)reader["SerieID"],
+                        reader["Titel"]?.ToString() ?? string.Empty,
+                        reader["Type"]?.ToString() ?? string.Empty
+                    ));
                 }
             }
             return items;

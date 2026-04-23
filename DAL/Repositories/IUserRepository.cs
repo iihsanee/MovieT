@@ -4,6 +4,6 @@ namespace DAL.Repositories
 {
     public interface IUserRepository
     {
-        UserDTO GetById(int id);
+        UserDTO? GetById(int id);
     }
 }

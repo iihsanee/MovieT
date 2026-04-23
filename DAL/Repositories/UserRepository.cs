@@ -12,7 +12,7 @@ namespace DAL.Repositories
             _connectionString = connectionString;
         }
 
-        public UserDTO GetById(int id)
+        public UserDTO? GetById(int id)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -22,11 +22,10 @@ namespace DAL.Repositories
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    return new UserDTO
-                    {
-                        Id = (int)reader["ID"],
-                        Naam = reader["Naam"].ToString()
-                    };
+                    return new UserDTO(
+                        (int)reader["ID"],
+                        reader["Naam"]?.ToString() ?? string.Empty
+                    );
                 }
             }
             return null;

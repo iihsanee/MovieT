@@ -14,9 +14,9 @@ namespace serviceLibary.Services
             _repository = repository;
         }
 
-        public SerieModel GetById(int id)
+        public SerieModel? GetById(int id)
         {
-            SerieDTO dto = _repository.GetById(id);
+            SerieDTO? dto = _repository.GetById(id);
             if (dto == null)
                 return null;
             return new SerieModel(

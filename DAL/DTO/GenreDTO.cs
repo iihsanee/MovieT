@@ -1,10 +1,13 @@
-﻿using System;
-
-namespace DAL.DTO
+﻿namespace DAL.DTO
 {
     public class GenreDTO
     {
-        public int Id { get; set; }
-        public string Naam { get; set; }
+        public int Id { get; }
+        public string Naam { get; } = string.Empty;
+        public GenreDTO(int id, string naam)
+        {
+            Id = id;
+            Naam = naam;
+        }
     }
 }
