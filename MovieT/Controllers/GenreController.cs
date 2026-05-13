@@ -15,26 +15,33 @@ namespace MovieT.Controllers
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new System.Exception("ConnectionString 'DefaultConnection' not found");
-
             var genreRepo = new GenreRepository(connectionString);
             _genreService = new GenreService(genreRepo);
         }
 
         public IActionResult Index()
         {
-            var genres = _genreService.GetAll();
-            var viewModels = new List<GenreViewModel>();
-
-            foreach (var genre in genres)
+            try
             {
-                viewModels.Add(new GenreViewModel
-                {
-                    Id = genre.Id,
-                    Naam = genre.Naam
-                });
-            }
+                var genres = _genreService.GetAll();
+                var viewModels = new List<GenreViewModel>();
 
-            return View(viewModels);
+                foreach (var genre in genres)
+                {
+                    viewModels.Add(new GenreViewModel
+                    {
+                        Id = genre.Id,
+                        Naam = genre.Naam
+                    });
+                }
+
+                return View(viewModels);
+            }
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het ophalen van de genres.";
+                return View("Error");
+            }
         }
     }
 }

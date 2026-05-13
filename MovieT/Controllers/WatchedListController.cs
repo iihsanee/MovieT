@@ -11,12 +11,8 @@ namespace MovieT.Controllers
         private List<WatchedListViewModel> GetWatchedList()
         {
             var json = HttpContext.Session.GetString("WatchedList");
-
             if (json == null)
-            {
                 return new List<WatchedListViewModel>();
-            }
-
             return JsonSerializer.Deserialize<List<WatchedListViewModel>>(json) ?? new List<WatchedListViewModel>();
         }
 
@@ -27,28 +23,41 @@ namespace MovieT.Controllers
 
         public IActionResult Index()
         {
-            var viewModels = GetWatchedList();
-            return View(viewModels);
+            try
+            {
+                var viewModels = GetWatchedList();
+                return View(viewModels);
+            }
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het ophalen van je watchedlist.";
+                return View("Error");
+            }
         }
 
         public IActionResult Add(int? filmId, int? serieId, string title, string type)
         {
-            var list = GetWatchedList();
-
-            if (!list.Exists(x => x.FilmId == filmId && x.SerieId == serieId))
+            try
             {
-                list.Add(new WatchedListViewModel
+                var list = GetWatchedList();
+                if (!list.Exists(x => x.FilmId == filmId && x.SerieId == serieId))
                 {
-                    FilmId = filmId,
-                    SerieId = serieId,
-                    Title = title,
-                    Type = type
-                });
-
-                SaveWatchedList(list);
+                    list.Add(new WatchedListViewModel
+                    {
+                        FilmId = filmId,
+                        SerieId = serieId,
+                        Title = title,
+                        Type = type
+                    });
+                    SaveWatchedList(list);
+                }
+                return RedirectToAction("Index", "WatchingList");
             }
-
-            return RedirectToAction("Index", "WatchingList");
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het toevoegen aan je watchedlist.";
+                return View("Error");
+            }
         }
     }
 }

@@ -27,16 +27,84 @@ namespace MovieT.Controllers
 
         public IActionResult Index(int? genreId)
         {
-            var series = _serieService.GetAll();
-            var allGenres = _genreService.GetAll();
-            var viewModels = new List<SerieViewModel>();
-
-            foreach (var serie in series)
+            try
             {
-                var genres = _genreService.GetBySerieId(serie.Id);
+                var series = _serieService.GetAll();
+                var allGenres = _genreService.GetAll();
+                var viewModels = new List<SerieViewModel>();
 
-                if (genreId == null || genres.Contains(_genreService.GetById(genreId.Value)?.Naam ?? string.Empty))
+                foreach (var serie in series)
                 {
+                    var genres = _genreService.GetBySerieId(serie.Id);
+
+                    if (genreId == null || genres.Contains(_genreService.GetById(genreId.Value)?.Naam ?? string.Empty))
+                    {
+                        if (!viewModels.Any(v => v.Id == serie.Id))
+                        {
+                            viewModels.Add(new SerieViewModel
+                            {
+                                Id = serie.Id,
+                                Title = serie.Title,
+                                ReleaseDate = serie.ReleaseDate,
+                                Duration = serie.Duration,
+                                Description = serie.Description,
+                                Genres = genres
+                            });
+                        }
+                    }
+                }
+
+                ViewBag.Genres = allGenres;
+                ViewBag.SelectedGenre = genreId;
+
+                return View(viewModels);
+            }
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het ophalen van de series.";
+                return View("Error");
+            }
+        }
+
+        public IActionResult Details(int id)
+        {
+            try
+            {
+                var serie = _serieService.GetById(id);
+
+                if (serie == null)
+                    return NotFound();
+
+                var viewModel = new SerieViewModel
+                {
+                    Id = serie.Id,
+                    Title = serie.Title,
+                    ReleaseDate = serie.ReleaseDate,
+                    Duration = serie.Duration,
+                    Description = serie.Description
+                };
+
+                return View(viewModel);
+            }
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het ophalen van de seriedetails.";
+                return View("Error");
+            }
+        }
+
+        public IActionResult Search(string query)
+        {
+            try
+            {
+                var series = _serieService.Search(query);
+                var allGenres = _genreService.GetAll();
+                var viewModels = new List<SerieViewModel>();
+
+                foreach (var serie in series)
+                {
+                    var genres = _genreService.GetBySerieId(serie.Id);
+
                     if (!viewModels.Any(v => v.Id == serie.Id))
                     {
                         viewModels.Add(new SerieViewModel
@@ -50,73 +118,45 @@ namespace MovieT.Controllers
                         });
                     }
                 }
+
+                ViewBag.Genres = allGenres;
+                ViewBag.SelectedGenre = null;
+
+                return View("Index", viewModels);
             }
-
-            ViewBag.Genres = allGenres;
-            ViewBag.SelectedGenre = genreId;
-
-            return View(viewModels);
-        }
-
-        public IActionResult Details(int id)
-        {
-            var serie = _serieService.GetById(id);
-
-            if (serie == null)
-                return NotFound();
-
-            var viewModel = new SerieViewModel
+            catch (Exception)
             {
-                Id = serie.Id,
-                Title = serie.Title,
-                ReleaseDate = serie.ReleaseDate,
-                Duration = serie.Duration,
-                Description = serie.Description
-            };
-
-            return View(viewModel);
-        }
-
-        public IActionResult Search(string query)
-        {
-            var series = _serieService.Search(query);
-            var allGenres = _genreService.GetAll();
-            var viewModels = new List<SerieViewModel>();
-
-            foreach (var serie in series)
-            {
-                var genres = _genreService.GetBySerieId(serie.Id);
-
-                if (!viewModels.Any(v => v.Id == serie.Id))
-                {
-                    viewModels.Add(new SerieViewModel
-                    {
-                        Id = serie.Id,
-                        Title = serie.Title,
-                        ReleaseDate = serie.ReleaseDate,
-                        Duration = serie.Duration,
-                        Description = serie.Description,
-                        Genres = genres
-                    });
-                }
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het zoeken naar series.";
+                return View("Error");
             }
-
-            ViewBag.Genres = allGenres;
-            ViewBag.SelectedGenre = null;
-
-            return View("Index", viewModels);
         }
 
         public IActionResult AddToWatchingList(int userId, int SerieId)
         {
-            _serieService.AddToWatchingList(userId, SerieId);
-            return RedirectToAction("Index");
+            try
+            {
+                _serieService.AddToWatchingList(userId, SerieId);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het toevoegen aan je watchinglist.";
+                return View("Error");
+            }
         }
 
         public IActionResult AddToWatchedList(int userId, int SerieId)
         {
-            _serieService.AddToWatchedList(userId, SerieId);
-            return RedirectToAction("Index");
+            try
+            {
+                _serieService.AddToWatchedList(userId, SerieId);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het toevoegen aan je watchedlist.";
+                return View("Error");
+            }
         }
     }
 }

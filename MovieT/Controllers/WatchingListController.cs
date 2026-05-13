@@ -11,12 +11,8 @@ namespace MovieT.Controllers
         private List<WatchingListViewModel> GetWatchingList()
         {
             var json = HttpContext.Session.GetString("WatchingList");
-
             if (json == null)
-            {
                 return new List<WatchingListViewModel>();
-            }
-
             return JsonSerializer.Deserialize<List<WatchingListViewModel>>(json) ?? new List<WatchingListViewModel>();
         }
 
@@ -27,73 +23,93 @@ namespace MovieT.Controllers
 
         public IActionResult Index()
         {
-            var viewModels = GetWatchingList();
-            return View(viewModels);
+            try
+            {
+                var viewModels = GetWatchingList();
+                return View(viewModels);
+            }
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het ophalen van je watchinglist.";
+                return View("Error");
+            }
         }
 
         public IActionResult AddFilm(int userId, int filmId, string title)
         {
-            var list = GetWatchingList();
-
-            if (!list.Exists(x => x.FilmId == filmId))
+            try
             {
-                list.Add(new WatchingListViewModel
+                var list = GetWatchingList();
+                if (!list.Exists(x => x.FilmId == filmId))
                 {
-                    UserId = userId,
-                    FilmId = filmId,
-                    Title = title,
-                    Type = "Film"
-                });
-
-                SaveWatchingList(list);
+                    list.Add(new WatchingListViewModel
+                    {
+                        UserId = userId,
+                        FilmId = filmId,
+                        Title = title,
+                        Type = "Film"
+                    });
+                    SaveWatchingList(list);
+                }
+                return RedirectToAction("Index", "Film");
             }
-
-            
-            return RedirectToAction("Index", "Film");
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het toevoegen van de film aan je watchinglist.";
+                return View("Error");
+            }
         }
 
         public IActionResult AddSerie(int userId, int serieId, string title)
         {
-            var list = GetWatchingList();
-
-            if (!list.Exists(x => x.SerieId == serieId))
+            try
             {
-                list.Add(new WatchingListViewModel
+                var list = GetWatchingList();
+                if (!list.Exists(x => x.SerieId == serieId))
                 {
-                    UserId = userId,
-                    SerieId = serieId,
-                    Title = title,
-                    Type = "Serie"
-                });
-
-                SaveWatchingList(list);
+                    list.Add(new WatchingListViewModel
+                    {
+                        UserId = userId,
+                        SerieId = serieId,
+                        Title = title,
+                        Type = "Serie"
+                    });
+                    SaveWatchingList(list);
+                }
+                return RedirectToAction("Index", "Serie");
             }
-
-            return RedirectToAction("Index", "Serie");
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het toevoegen van de serie aan je watchinglist.";
+                return View("Error");
+            }
         }
 
         public IActionResult MoveToWatched(int? filmId, int? serieId, string title, string type)
         {
-            var list = GetWatchingList();
-
-            if (filmId.HasValue)
+            try
             {
-                list.RemoveAll(x => x.FilmId == filmId);
+                var list = GetWatchingList();
+                if (filmId.HasValue)
+                    list.RemoveAll(x => x.FilmId == filmId);
+                else if (serieId.HasValue)
+                    list.RemoveAll(x => x.SerieId == serieId);
+
+                SaveWatchingList(list);
+
+                return RedirectToAction("Add", "WatchedList", new
+                {
+                    filmId = filmId,
+                    serieId = serieId,
+                    title = title,
+                    type = type
+                });
             }
-            else if (serieId.HasValue)
+            catch (Exception)
             {
-                list.RemoveAll(x => x.SerieId == serieId);
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het verplaatsen naar je watchedlist.";
+                return View("Error");
             }
-
-            SaveWatchingList(list);
-
-            return RedirectToAction("Add", "WatchedList", new
-            {
-                filmId = filmId,
-                serieId = serieId,
-                title = title,
-                type = type
-            });
         }
     }
 }

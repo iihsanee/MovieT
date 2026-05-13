@@ -15,19 +15,26 @@ namespace DAL.Repositories
 
         public UserDTO? GetById(int id)
         {
-            using (SqlConnection con = new SqlConnection(_connectionString))
+            try
             {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT ID, Naam FROM Gebruiker WHERE ID = @id", con);
-                cmd.Parameters.AddWithValue("@id", id);
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionString))
                 {
-                    return new UserDTO(
-                        (int)reader["ID"],
-                        reader["Naam"]?.ToString() ?? string.Empty
-                    );
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT ID, Naam FROM Gebruiker WHERE ID = @id", con);
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        return new UserDTO(
+                            (int)reader["ID"],
+                            reader["Naam"]?.ToString() ?? string.Empty
+                        );
+                    }
                 }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Databasefout bij ophalen van gebruiker met ID {id}.", ex);
             }
             return null;
         }

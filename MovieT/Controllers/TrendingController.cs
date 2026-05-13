@@ -17,44 +17,49 @@ namespace MovieT.Controllers
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new System.Exception("ConnectionString 'DefaultConnection' not found");
-
             var filmRepo = new FilmModelRepository(connectionString);
             var serieRepo = new SerieRepository(connectionString);
-
             _filmService = new FilmModel(filmRepo);
             _serieService = new SerieService(serieRepo);
         }
 
         public IActionResult Index()
         {
-            var trendingFilms = _filmService.GetTop10Trending();
-            var trendingSeries = _serieService.GetTop10Trending();
-
-            var viewModels = new List<TrendingViewModel>();
-
-            foreach (var film in trendingFilms)
+            try
             {
-                viewModels.Add(new TrendingViewModel
-                {
-                    Id = film.Id,
-                    Title = film.Title,
-                    Type = "Film"
-                });
-            }
+                var trendingFilms = _filmService.GetTop10Trending();
+                var trendingSeries = _serieService.GetTop10Trending();
+                var viewModels = new List<TrendingViewModel>();
 
-            foreach (var serie in trendingSeries)
+                foreach (var film in trendingFilms)
+                {
+                    viewModels.Add(new TrendingViewModel
+                    {
+                        Id = film.Id,
+                        Title = film.Title,
+                        Type = "Film"
+                    });
+                }
+
+                foreach (var serie in trendingSeries)
+                {
+                    viewModels.Add(new TrendingViewModel
+                    {
+                        Id = serie.Id,
+                        Title = serie.Title,
+                        Type = "Serie"
+                    });
+                }
+
+                viewModels = viewModels.Take(10).ToList();
+
+                return View(viewModels);
+            }
+            catch (Exception)
             {
-                viewModels.Add(new TrendingViewModel
-                {
-                    Id = serie.Id,
-                    Title = serie.Title,
-                    Type = "Serie"
-                });
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het ophalen van de trending lijst.";
+                return View("Error");
             }
-
-            viewModels = viewModels.Take(10).ToList();
-
-            return View(viewModels);
         }
     }
 }
