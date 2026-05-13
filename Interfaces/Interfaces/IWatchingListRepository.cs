@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using DAL.DTO;
+﻿using DAL.DTO;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
-namespace DAL.Repositories
+namespace Interfaces.Interfaces
 {
     public interface IWatchingListRepository
     {

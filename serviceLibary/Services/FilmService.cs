@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using DAL.DTO;
-using DAL.Repositories;
+using Interfaces.Interfaces;    
 using serviceLibary.Models;
 
 namespace serviceLibary.Services

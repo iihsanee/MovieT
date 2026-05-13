@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using Microsoft.Data.SqlClient;
 using DAL.DTO;
+using Interfaces.Interfaces;
 
 namespace DAL.Repositories
 {

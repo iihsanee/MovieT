@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="DAL/DAL.csproj" Id="a5b07e6c-0cd0-4be4-9683-ba866e2a8272" />
+  <Project Path="Interfaces/Interfaces.csproj" Id="c61b79c1-f540-461e-9102-57712b0d0643" />
   <Project Path="MovieT/MovieT.csproj" />
   <Project Path="serviceLibary/serviceLibary.csproj" Id="98ecdde2-8f84-4f1c-9d25-39b25227aaa8" />
   <Project Path="unit test/unit test.csproj" Id="8a106bea-79a5-4b16-ae99-eed6c323985e" />

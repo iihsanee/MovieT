@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DAL.Repositories;
+using Interfaces.Interfaces;
 using serviceLibary.Models;
 
 namespace serviceLibary.Services

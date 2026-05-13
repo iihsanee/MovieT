@@ -1,4 +1,4 @@
-﻿using DAL.Repositories;
+﻿using Interfaces.Interfaces;
 using serviceLibary.Models;
 using System.Collections.Generic;
 

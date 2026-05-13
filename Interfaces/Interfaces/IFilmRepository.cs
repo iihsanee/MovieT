@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿
 using DAL.DTO;
 
-namespace DAL.Repositories
+namespace Interfaces.Interfaces
 {
     public interface IFilmModelRepository
     {
