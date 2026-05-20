@@ -11,9 +11,12 @@ namespace MovieT.Controllers
         private List<WatchedListViewModel> GetWatchedList()
         {
             var json = HttpContext.Session.GetString("WatchedList");
+
             if (json == null)
                 return new List<WatchedListViewModel>();
-            return JsonSerializer.Deserialize<List<WatchedListViewModel>>(json) ?? new List<WatchedListViewModel>();
+
+            return JsonSerializer.Deserialize<List<WatchedListViewModel>>(json)
+                   ?? new List<WatchedListViewModel>();
         }
 
         private void SaveWatchedList(List<WatchedListViewModel> list)
@@ -39,7 +42,15 @@ namespace MovieT.Controllers
         {
             try
             {
+
+                if (HttpContext.Session.GetString("Gebruiker") == null)
+                {
+                    TempData["Foutmelding"] = "Je moet eerst een account aanmaken.";
+                    return RedirectToAction("Index", "User");
+                }
+
                 var list = GetWatchedList();
+
                 if (!list.Exists(x => x.FilmId == filmId && x.SerieId == serieId))
                 {
                     list.Add(new WatchedListViewModel
@@ -49,8 +60,10 @@ namespace MovieT.Controllers
                         Title = title,
                         Type = type
                     });
+
                     SaveWatchedList(list);
                 }
+
                 return RedirectToAction("Index", "WatchingList");
             }
             catch (Exception)

@@ -11,9 +11,12 @@ namespace MovieT.Controllers
         private List<WatchingListViewModel> GetWatchingList()
         {
             var json = HttpContext.Session.GetString("WatchingList");
+
             if (json == null)
                 return new List<WatchingListViewModel>();
-            return JsonSerializer.Deserialize<List<WatchingListViewModel>>(json) ?? new List<WatchingListViewModel>();
+
+            return JsonSerializer.Deserialize<List<WatchingListViewModel>>(json)
+                   ?? new List<WatchingListViewModel>();
         }
 
         private void SaveWatchingList(List<WatchingListViewModel> list)
@@ -39,7 +42,15 @@ namespace MovieT.Controllers
         {
             try
             {
+
+                if (HttpContext.Session.GetString("Gebruiker") == null)
+                {
+                    TempData["Foutmelding"] = "Je moet eerst een account aanmaken.";
+                    return RedirectToAction("Index", "User");
+                }
+
                 var list = GetWatchingList();
+
                 if (!list.Exists(x => x.FilmId == filmId))
                 {
                     list.Add(new WatchingListViewModel
@@ -49,8 +60,10 @@ namespace MovieT.Controllers
                         Title = title,
                         Type = "Film"
                     });
+
                     SaveWatchingList(list);
                 }
+
                 return RedirectToAction("Index", "Film");
             }
             catch (Exception)
@@ -64,7 +77,15 @@ namespace MovieT.Controllers
         {
             try
             {
+
+                if (HttpContext.Session.GetString("Gebruiker") == null)
+                {
+                    TempData["Foutmelding"] = "Je moet eerst een account aanmaken.";
+                    return RedirectToAction("Index", "User");
+                }
+
                 var list = GetWatchingList();
+
                 if (!list.Exists(x => x.SerieId == serieId))
                 {
                     list.Add(new WatchingListViewModel
@@ -74,8 +95,10 @@ namespace MovieT.Controllers
                         Title = title,
                         Type = "Serie"
                     });
+
                     SaveWatchingList(list);
                 }
+
                 return RedirectToAction("Index", "Serie");
             }
             catch (Exception)
@@ -90,8 +113,10 @@ namespace MovieT.Controllers
             try
             {
                 var list = GetWatchingList();
+
                 if (filmId.HasValue)
                     list.RemoveAll(x => x.FilmId == filmId);
+
                 else if (serieId.HasValue)
                     list.RemoveAll(x => x.SerieId == serieId);
 

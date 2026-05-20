@@ -12,13 +12,15 @@ namespace unit_test.ModelTesten
             // Arrange
             var id = 1;
             var naam = "TestGebruiker";
+            var wachtwoord = "Wachtwoord123";
 
             // Act
-            var user = new UserModel(id, naam);
+            var user = new UserModel(id, naam, wachtwoord);
 
             // Assert
             Assert.AreEqual(id, user.Id);
             Assert.AreEqual(naam, user.Naam);
+            Assert.AreEqual(wachtwoord, user.Wachtwoord);
         }
     }
 }
