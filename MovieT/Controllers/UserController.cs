@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using serviceLibary.Services;
 using MovieT.ViewModels;
+using System.Collections.Generic;
 using System.Text.Json;
 using DAL.Repositories;
 
@@ -72,20 +75,27 @@ namespace MovieT.Controllers
 
             try
             {
-                var fout = _userService.RegistreerGebruiker(
-                    viewModel.Gebruikersnaam,
-                    viewModel.Wachtwoord,
-                    viewModel.BevestigWachtwoord
-                );
-
-                if (fout != null)
+                if (_userService.UsernameExists(viewModel.Gebruikersnaam))
                 {
-                    ModelState.AddModelError(string.Empty, fout);
+                    ModelState.AddModelError(string.Empty, "Deze gebruikersnaam is al in gebruik.");
                     return View("Index", new UserViewModel());
                 }
 
+                if (viewModel.Wachtwoord.Length < 8)
+                {
+                    ModelState.AddModelError(string.Empty, "Het wachtwoord moet minimaal 8 tekens bevatten.");
+                    return View("Index", new UserViewModel());
+                }
+
+                if (viewModel.Wachtwoord != viewModel.BevestigWachtwoord)
+                {
+                    ModelState.AddModelError(string.Empty, "De wachtwoorden komen niet overeen.");
+                    return View("Index", new UserViewModel());
+                }
+
+                _userService.RegistreerGebruiker(viewModel.Gebruikersnaam, viewModel.Wachtwoord);
                 HttpContext.Session.SetString("Gebruiker", viewModel.Gebruikersnaam);
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception)
             {
@@ -103,14 +113,21 @@ namespace MovieT.Controllers
         [HttpPost]
         public IActionResult Login(string gebruikersnaam, string wachtwoord)
         {
-            var fout = _userService.LoginGebruiker(gebruikersnaam, wachtwoord);
-            if (fout != null)
+            var user = _userService.GetByNaam(gebruikersnaam);
+            if (user == null)
             {
-                TempData["Foutmelding"] = fout;
+                TempData["Foutmelding"] = "Gebruikersnaam bestaat niet.";
                 return View();
             }
+
+            if (user.Wachtwoord != wachtwoord)
+            {
+                TempData["Foutmelding"] = "Wachtwoord is onjuist.";
+                return View();
+            }
+
             HttpContext.Session.SetString("Gebruiker", gebruikersnaam);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
     }
 }
