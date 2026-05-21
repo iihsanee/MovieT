@@ -1,0 +1,19 @@
+﻿@model MovieT.ViewModels.UserViewModel
+
+@if (TempData["Foutmelding"] != null)
+{
+    <p style="color:red">@TempData["Foutmelding"]</p>
+}
+
+<h2>Inloggen</h2>
+<form asp-action="Login" method="post">
+    <div>
+        <label>Gebruikersnaam</label>
+        <input name="gebruikersnaam" />
+    </div>
+    <div>
+        <label>Wachtwoord</label>
+        <input name="wachtwoord" type="password" />
+    </div>
+    <button type="submit">Inloggen</button>
+</form>

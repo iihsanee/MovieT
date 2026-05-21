@@ -1,18 +1,15 @@
 ﻿using Microsoft.Data.SqlClient;
 using DAL.DTO;
 using Interfaces.Interfaces;
-
 namespace DAL.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly string _connectionString;
-
         public UserRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
-
         public UserDTO? GetById(int id)
         {
             try
@@ -40,7 +37,33 @@ namespace DAL.Repositories
             }
             return null;
         }
-
+        public UserDTO? GetByNaam(string naam)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand(
+                        "SELECT ID, Naam, Wachtwoord FROM Gebruiker WHERE Naam = @naam", con);
+                    cmd.Parameters.AddWithValue("@naam", naam);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        return new UserDTO(
+                            (int)reader["ID"],
+                            reader["Naam"]?.ToString() ?? string.Empty,
+                            reader["Wachtwoord"]?.ToString() ?? string.Empty
+                        );
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Databasefout bij ophalen van gebruiker op naam.", ex);
+            }
+            return null;
+        }
         public bool UsernameExists(string naam)
         {
             try
@@ -60,7 +83,6 @@ namespace DAL.Repositories
                 throw new Exception("Databasefout bij controleren van gebruikersnaam.", ex);
             }
         }
-
         public void AddUser(string naam, string wachtwoord)
         {
             try

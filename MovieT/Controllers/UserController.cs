@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using serviceLibary.Services;
 using MovieT.ViewModels;
-using System.Collections.Generic;
 using System.Text.Json;
 using DAL.Repositories;
 
@@ -17,7 +14,6 @@ namespace MovieT.Controllers
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new Exception("ConnectionString 'DefaultConnection' not found");
-
             var userRepo = new UserRepository(connectionString);
             _userService = new UserService(userRepo);
         }
@@ -26,7 +22,13 @@ namespace MovieT.Controllers
         {
             try
             {
-                var user = _userService.GetById(1);
+                var gebruikersnaam = HttpContext.Session.GetString("Gebruiker");
+                if (gebruikersnaam == null)
+                    return RedirectToAction("Login");
+
+                var user = _userService.GetByNaam(gebruikersnaam);
+                if (user == null)
+                    return RedirectToAction("Login");
 
                 var watchingListJson = HttpContext.Session.GetString("WatchingList");
                 var watchedListJson = HttpContext.Session.GetString("WatchedList");
@@ -41,8 +43,8 @@ namespace MovieT.Controllers
 
                 var viewModel = new UserViewModel
                 {
-                    Id = user?.Id ?? 1,
-                    Gebruikersnaam = user?.Naam ?? "Gebruiker",
+                    Id = user.Id,
+                    Gebruikersnaam = user.Naam,
                     WatchingList = watchingList,
                     WatchedList = watchedList
                 };
@@ -59,14 +61,14 @@ namespace MovieT.Controllers
         [HttpGet]
         public IActionResult AanmeldFormulier()
         {
-            return View("User", new UserViewModel());
+            return View("Index", new UserViewModel());
         }
 
         [HttpPost]
         public IActionResult AccountAanmaken(UserViewModel viewModel)
         {
             if (!ModelState.IsValid)
-                return View("User", viewModel);
+                return View("Index", new UserViewModel());
 
             try
             {
@@ -79,12 +81,10 @@ namespace MovieT.Controllers
                 if (fout != null)
                 {
                     ModelState.AddModelError(string.Empty, fout);
-                    return View("User", viewModel);
+                    return View("Index", new UserViewModel());
                 }
 
-
                 HttpContext.Session.SetString("Gebruiker", viewModel.Gebruikersnaam);
-
                 return RedirectToAction("Index");
             }
             catch (Exception)
@@ -92,6 +92,25 @@ namespace MovieT.Controllers
                 TempData["Foutmelding"] = "Er is een fout opgetreden bij het aanmaken van je account.";
                 return View("Error");
             }
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(string gebruikersnaam, string wachtwoord)
+        {
+            var fout = _userService.LoginGebruiker(gebruikersnaam, wachtwoord);
+            if (fout != null)
+            {
+                TempData["Foutmelding"] = fout;
+                return View();
+            }
+            HttpContext.Session.SetString("Gebruiker", gebruikersnaam);
+            return RedirectToAction("Index");
         }
     }
 }

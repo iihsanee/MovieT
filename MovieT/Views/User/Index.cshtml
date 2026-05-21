@@ -1,49 +1,31 @@
 ﻿@model MovieT.ViewModels.UserViewModel
 
-<h1>Profiel van @Model.Gebruikersnaam</h1>
-
-<h2>Watching List</h2>
-<ul>
-    @foreach (var item in Model.WatchingList)
-    {
-        <li><strong>@item.Title</strong> - @item.Type</li>
-    }
-</ul>
-
-<h2>Watched List</h2>
-<ul>
-    @foreach (var item in Model.WatchedList)
-    {
-        <li><strong>@item.Title</strong> - @item.Type</li>
-    }
-</ul>
+@if (TempData["Foutmelding"] != null)
+{
+    <p style="color:red">
+        @TempData["Foutmelding"]
+    </p>
+}
 
 <h2>Account aanmaken</h2>
-
 <form asp-action="AccountAanmaken" method="post">
-
     <div asp-validation-summary="All" class="text-danger"></div>
-
     <div>
         <label asp-for="Gebruikersnaam"></label>
         <input asp-for="Gebruikersnaam" />
         <span asp-validation-for="Gebruikersnaam" class="text-danger"></span>
     </div>
-
     <div>
         <label asp-for="Wachtwoord"></label>
         <input asp-for="Wachtwoord" type="password" />
         <span asp-validation-for="Wachtwoord" class="text-danger"></span>
     </div>
-
     <div>
         <label asp-for="BevestigWachtwoord"></label>
         <input asp-for="BevestigWachtwoord" type="password" />
         <span asp-validation-for="BevestigWachtwoord" class="text-danger"></span>
     </div>
-
     <button type="submit">Account aanmaken</button>
-
 </form>
 
 @section Scripts {
