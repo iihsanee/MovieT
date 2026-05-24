@@ -1,34 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using MovieT.ViewModels;
-using System.Collections.Generic;
-using System.Text.Json;
+using DAL.Repositories;
 
 namespace MovieT.Controllers
 {
     public class WatchedListController : Controller
     {
-        private List<WatchedListViewModel> GetWatchedList()
+        private readonly WatchedListRepository _watchedListRepo;
+        private readonly UserRepository _userRepo;
+
+        public WatchedListController(IConfiguration configuration)
         {
-            var json = HttpContext.Session.GetString("WatchedList");
-
-            if (json == null)
-                return new List<WatchedListViewModel>();
-
-            return JsonSerializer.Deserialize<List<WatchedListViewModel>>(json)
-                   ?? new List<WatchedListViewModel>();
-        }
-
-        private void SaveWatchedList(List<WatchedListViewModel> list)
-        {
-            HttpContext.Session.SetString("WatchedList", JsonSerializer.Serialize(list));
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new Exception("ConnectionString 'DefaultConnection' not found");
+            _watchedListRepo = new WatchedListRepository(connectionString);
+            _userRepo = new UserRepository(connectionString);
         }
 
         public IActionResult Index()
         {
             try
             {
-                var viewModels = GetWatchedList();
+                var gebruikersnaam = HttpContext.Session.GetString("Gebruiker");
+                if (gebruikersnaam == null)
+                    return RedirectToAction("Login", "User");
+
+                var user = _userRepo.GetByNaam(gebruikersnaam);
+                if (user == null)
+                    return RedirectToAction("Login", "User");
+
+                var list = _watchedListRepo.GetByUser(user.Id);
+                var viewModels = list.Select(x => new WatchedListViewModel
+                {
+                    FilmId = x.FilmId,
+                    SerieId = x.SerieId,
+                    Title = x.Title,
+                    Type = x.Type
+                }).ToList();
+
                 return View(viewModels);
             }
             catch (Exception)
@@ -42,28 +53,18 @@ namespace MovieT.Controllers
         {
             try
             {
-
                 if (HttpContext.Session.GetString("Gebruiker") == null)
                 {
-                    TempData["Foutmelding"] = "Je moet eerst een account aanmaken.";
-                    return RedirectToAction("Index", "User");
+                    TempData["Foutmelding"] = "Je moet eerst inloggen of een account aanmaken.";
+                    return RedirectToAction("Login", "User");
                 }
 
-                var list = GetWatchedList();
+                var gebruikersnaam = HttpContext.Session.GetString("Gebruiker");
+                var user = _userRepo.GetByNaam(gebruikersnaam!);
+                if (user == null)
+                    return RedirectToAction("Login", "User");
 
-                if (!list.Exists(x => x.FilmId == filmId && x.SerieId == serieId))
-                {
-                    list.Add(new WatchedListViewModel
-                    {
-                        FilmId = filmId,
-                        SerieId = serieId,
-                        Title = title,
-                        Type = type
-                    });
-
-                    SaveWatchedList(list);
-                }
-
+                _watchedListRepo.Add(user.Id, filmId, serieId);
                 return RedirectToAction("Index", "WatchingList");
             }
             catch (Exception)

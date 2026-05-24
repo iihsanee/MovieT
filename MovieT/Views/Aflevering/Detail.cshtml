@@ -1,0 +1,13 @@
+﻿@model MovieT.ViewModels.AfleveringViewModel
+
+<h2>@Model.Titel</h2>
+
+@if (TempData["Foutmelding"] != null)
+{
+    <p style="color:red">@TempData["Foutmelding"]</p>
+}
+
+<p>Afleveringsnummer: @Model.Afleveringsnummer</p>
+<p>Duurtijd: @Model.Duurtijd minuten</p>
+
+<a asp-controller="Aflevering" asp-action="Index" asp-route-seizoenId="@Model.SeizoenId">Terug naar afleveringen</a>

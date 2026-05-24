@@ -1,0 +1,31 @@
+﻿@model List<MovieT.ViewModels.SeizoenViewModel>
+
+@if (TempData["Foutmelding"] != null)
+{
+    <p style="color:red">@TempData["Foutmelding"]</p>
+}
+
+<h1>Seizoenen</h1>
+
+@if (!Model.Any())
+{
+    <p>Geen seizoenen gevonden.</p>
+}
+else
+{
+    @foreach (var seizoen in Model)
+    {
+        <div style="border:1px solid black; padding:10px; margin-bottom:10px;">
+            <h2>Seizoen @seizoen.Seizoennummer</h2>
+            <p>Aantal afleveringen: @seizoen.AantalAfleveringen</p>
+            <p>Jaartal: @seizoen.Jaartal</p>
+            <a asp-controller="Aflevering"
+               asp-action="Index"
+               asp-route-seizoenId="@seizoen.Id">
+                Bekijk afleveringen
+            </a>
+        </div>
+    }
+}
+
+<a asp-controller="Serie" asp-action="Index">Terug naar series</a>

@@ -1,6 +1,51 @@
 ﻿@model MovieT.ViewModels.SerieViewModel
+
 <h1>@Model.Title</h1>
 <p><strong>Beschrijving:</strong> @Model.Description</p>
-<p><strong>Release:</strong> @Model.ReleaseDate</p>
+<p><strong>Release:</strong> @Model.ReleaseDate.Year</p>
 <p><strong>Duur:</strong> @Model.Duration</p>
-<a asp-action="Index">Terug</a>
+
+<h2>Seizoenen en afleveringen</h2>
+
+@if (Model.Seizoenen == null || !Model.Seizoenen.Any())
+{
+    <p>Geen seizoenen gevonden.</p>
+}
+else
+{
+    @foreach (var seizoen in Model.Seizoenen)
+    {
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
+            <h3>Seizoen @seizoen.Seizoennummer (@seizoen.Jaartal) - @seizoen.AantalAfleveringen afleveringen</h3>
+            @if (seizoen.Afleveringen != null && seizoen.Afleveringen.Any())
+            {
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nr</th>
+                            <th>Titel</th>
+                            <th>Duurtijd</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var aflevering in seizoen.Afleveringen)
+                        {
+                            <tr>
+                                <td>@aflevering.Afleveringsnummer</td>
+                                <td>@aflevering.Titel</td>
+                                <td>@aflevering.Duurtijd min</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>Geen afleveringen gevonden voor dit seizoen.</p>
+            }
+        </div>
+    }
+}
+
+<br />
+<a asp-action="Index">Terug naar series</a>

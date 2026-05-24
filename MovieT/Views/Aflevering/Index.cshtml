@@ -1,0 +1,41 @@
+﻿@model List<MovieT.ViewModels.AfleveringViewModel>
+
+<h2>Afleveringen</h2>
+
+@if (TempData["Foutmelding"] != null)
+{
+    <p style="color:red">@TempData["Foutmelding"]</p>
+}
+
+@if (!Model.Any())
+{
+    <p>Geen afleveringen gevonden.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Nr</th>
+                <th>Titel</th>
+                <th>Duurtijd (min)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var aflevering in Model)
+            {
+                <tr>
+                    <td>@aflevering.Afleveringsnummer</td>
+                    <td>
+                        <a asp-controller="Aflevering" asp-action="Detail" asp-route-id="@aflevering.Id">
+                            @aflevering.Titel
+                        </a>
+                    </td>
+                    <td>@aflevering.Duurtijd min</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-controller="Seizoen" asp-action="Detail" asp-route-id="@ViewBag.SeizoenId">Terug naar seizoen</a>

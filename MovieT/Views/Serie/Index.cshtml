@@ -1,15 +1,16 @@
 ﻿@model List<MovieT.ViewModels.SerieViewModel>
 @using serviceLibary.Models
-
 @{
     var genres = ViewBag.Genres as List<GenreModel> ?? new List<GenreModel>();
 }
 
 <h1>Series</h1>
+
 <form method="get" asp-action="Search">
-    <input type="text" name="query" placeholder="Zoek serie..." />
+    <input type="text" name="query" placeholder="Zoek een serie..." />
     <button type="submit">Zoeken</button>
 </form>
+
 <form method="get" asp-action="Index">
     <select name="genreId">
         <option value="">Alle genres</option>
@@ -27,6 +28,7 @@
     </select>
     <button type="submit">Filter</button>
 </form>
+
 <ul>
     @foreach (var serie in Model)
     {
@@ -36,6 +38,9 @@
             <a asp-action="Details" asp-route-id="@serie.Id">Details</a> |
             <a asp-controller="WatchingList" asp-action="AddSerie" asp-route-userId="1" asp-route-serieId="@serie.Id" asp-route-title="@serie.Title">
                 Add to Watching List
+            </a> |
+            <a asp-controller="WatchedList" asp-action="Add" asp-route-serieId="@serie.Id" asp-route-title="@serie.Title" asp-route-type="Serie">
+                Add to Watched List
             </a>
         </li>
     }

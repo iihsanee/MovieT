@@ -1,6 +1,4 @@
 ﻿using DAL.DTO;
-using System.Collections.Generic;
-using System.Xml.Linq;
 
 namespace Interfaces.Interfaces
 {
@@ -8,5 +6,6 @@ namespace Interfaces.Interfaces
     {
         List<WatchingListDTO> GetByUser(int userId);
         void Add(int userId, int? filmId, int? serieId);
+        void Remove(int userId, int? filmId, int? serieId);
     }
 }

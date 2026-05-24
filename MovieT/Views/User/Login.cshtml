@@ -1,5 +1,10 @@
 ﻿@model MovieT.ViewModels.UserViewModel
 
+@if (TempData["Melding"] != null)
+{
+    <p style="color:green">@TempData["Melding"]</p>
+}
+
 @if (TempData["Foutmelding"] != null)
 {
     <p style="color:red">@TempData["Foutmelding"]</p>

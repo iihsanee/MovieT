@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using DAL.DTO;
 using Interfaces.Interfaces;
 
@@ -59,7 +58,13 @@ namespace DAL.Repositories
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "INSERT INTO WatchedList (UserID, FilmModelID, SerieID) VALUES (@userId, @filmId, @serieId)", con);
+                        @"INSERT INTO WatchedList (UserID, FilmModelID, SerieID, Titel, Type)
+                          SELECT @userId, @filmId, @serieId,
+                          CASE WHEN @filmId IS NOT NULL THEN f.Titel ELSE s.Titel END,
+                          CASE WHEN @filmId IS NOT NULL THEN 'Film' ELSE 'Serie' END
+                          FROM (SELECT 1 as dummy) d
+                          LEFT JOIN Film f ON f.ID = @filmId
+                          LEFT JOIN Serie s ON s.ID = @serieId", con);
                     cmd.Parameters.AddWithValue("@userId", userId);
                     cmd.Parameters.AddWithValue("@filmId", filmId.HasValue ? (object)filmId.Value : DBNull.Value);
                     cmd.Parameters.AddWithValue("@serieId", serieId.HasValue ? (object)serieId.Value : DBNull.Value);

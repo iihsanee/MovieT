@@ -12,13 +12,14 @@ namespace MovieT.Controllers
     public class UserController : Controller
     {
         private readonly UserService _userService;
+        private readonly UserRepository _userRepo;
 
         public UserController(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new Exception("ConnectionString 'DefaultConnection' not found");
-            var userRepo = new UserRepository(connectionString);
-            _userService = new UserService(userRepo);
+            _userRepo = new UserRepository(connectionString);
+            _userService = new UserService(_userRepo);
         }
 
         public IActionResult Index()
@@ -94,8 +95,8 @@ namespace MovieT.Controllers
                 }
 
                 _userService.RegistreerGebruiker(viewModel.Gebruikersnaam, viewModel.Wachtwoord);
-                HttpContext.Session.SetString("Gebruiker", viewModel.Gebruikersnaam);
-                return RedirectToAction("Index", "Home");
+                TempData["Melding"] = "Je account is aangemaakt! Log nu in.";
+                return RedirectToAction("Login");
             }
             catch (Exception)
             {
@@ -113,14 +114,14 @@ namespace MovieT.Controllers
         [HttpPost]
         public IActionResult Login(string gebruikersnaam, string wachtwoord)
         {
-            var user = _userService.GetByNaam(gebruikersnaam);
-            if (user == null)
+            var dto = _userRepo.GetByNaam(gebruikersnaam);
+            if (dto == null)
             {
                 TempData["Foutmelding"] = "Gebruikersnaam bestaat niet.";
                 return View();
             }
 
-            if (user.Wachtwoord != wachtwoord)
+            if (!_userRepo.VerifyPassword(wachtwoord, dto.Wachtwoord))
             {
                 TempData["Foutmelding"] = "Wachtwoord is onjuist.";
                 return View();

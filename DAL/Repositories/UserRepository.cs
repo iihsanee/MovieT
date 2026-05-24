@@ -1,15 +1,18 @@
 ﻿using Microsoft.Data.SqlClient;
 using DAL.DTO;
 using Interfaces.Interfaces;
+
 namespace DAL.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly string _connectionString;
+
         public UserRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
+
         public UserDTO? GetById(int id)
         {
             try
@@ -37,6 +40,7 @@ namespace DAL.Repositories
             }
             return null;
         }
+
         public UserDTO? GetByNaam(string naam)
         {
             try
@@ -64,6 +68,7 @@ namespace DAL.Repositories
             }
             return null;
         }
+
         public bool UsernameExists(string naam)
         {
             try
@@ -83,6 +88,7 @@ namespace DAL.Repositories
                 throw new Exception("Databasefout bij controleren van gebruikersnaam.", ex);
             }
         }
+
         public void AddUser(string naam, string wachtwoord)
         {
             try
@@ -90,10 +96,11 @@ namespace DAL.Repositories
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 {
                     con.Open();
+                    string hashedWachtwoord = BCrypt.Net.BCrypt.HashPassword(wachtwoord);
                     SqlCommand cmd = new SqlCommand(
                         "INSERT INTO Gebruiker (Naam, Wachtwoord) VALUES (@naam, @wachtwoord)", con);
                     cmd.Parameters.AddWithValue("@naam", naam);
-                    cmd.Parameters.AddWithValue("@wachtwoord", wachtwoord);
+                    cmd.Parameters.AddWithValue("@wachtwoord", hashedWachtwoord);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -101,6 +108,11 @@ namespace DAL.Repositories
             {
                 throw new Exception("Databasefout bij aanmaken van gebruiker.", ex);
             }
+        }
+
+        public bool VerifyPassword(string wachtwoord, string hashedWachtwoord)
+        {
+            return BCrypt.Net.BCrypt.Verify(wachtwoord, hashedWachtwoord);
         }
     }
 }

@@ -1,0 +1,17 @@
+﻿@model MovieT.ViewModels.SeizoenViewModel
+
+<h2>Seizoen @Model.Seizoennummer</h2>
+
+@if (TempData["Foutmelding"] != null)
+{
+    <p style="color:red">@TempData["Foutmelding"]</p>
+}
+
+<p>Jaartal: @Model.Jaartal</p>
+<p>Aantal afleveringen: @Model.AantalAfleveringen</p>
+
+<h3>Afleveringen</h3>
+<a asp-controller="Aflevering" asp-action="Index" asp-route-seizoenId="@Model.Id">Bekijk afleveringen</a>
+
+<br />
+<a asp-controller="Seizoen" asp-action="Index" asp-route-serieId="@Model.SerieId">Terug naar seizoenen</a>
