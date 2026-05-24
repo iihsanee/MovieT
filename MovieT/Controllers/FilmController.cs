@@ -10,45 +10,40 @@ namespace MovieT.Controllers
 {
     public class FilmController : Controller
     {
-        private readonly FilmModel _FilmModelService;
+        private readonly FilmModel _filmService;
         private readonly GenreService _genreService;
 
         public FilmController(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new System.Exception("ConnectionString 'DefaultConnection' not found");
-
-            var filmRepo = new FilmModelRepository(connectionString);
-            var genreRepo = new GenreRepository(connectionString);
-
-            _FilmModelService = new FilmModel(filmRepo);
-            _genreService = new GenreService(genreRepo);
+            _filmService = new FilmModel(new FilmModelRepository(connectionString));
+            _genreService = new GenreService(new GenreRepository(connectionString));
         }
 
         public IActionResult Index(int? genreId)
         {
             try
             {
-                var FilmModels = _FilmModelService.GetAll();
+                var films = _filmService.GetAll();
                 var allGenres = _genreService.GetAll();
                 var viewModels = new List<FilmModelViewModel>();
 
-                foreach (var FilmModel in FilmModels)
+                foreach (var film in films)
                 {
-                    var genres = _genreService.GetByFilmId(FilmModel.Id);
-                    var genreName = genreId == null ? null : _genreService.GetById(genreId.Value)?.Naam;
+                    var genres = _genreService.GetByFilmId(film.Id);
 
-                    if (genreId == null || (genreName != null && genres.Contains(genreName)))
+                    if (genreId == null || genres.Contains(_genreService.GetById(genreId.Value)?.Naam ?? string.Empty))
                     {
-                        if (!viewModels.Any(v => v.Id == FilmModel.Id))
+                        if (!viewModels.Any(v => v.Id == film.Id))
                         {
                             viewModels.Add(new FilmModelViewModel
                             {
-                                Id = FilmModel.Id,
-                                Title = FilmModel.Title,
-                                ReleaseDate = FilmModel.ReleaseDate,
-                                Duration = FilmModel.Duration,
-                                Description = FilmModel.Description,
+                                Id = film.Id,
+                                Title = film.Title,
+                                ReleaseDate = film.ReleaseDate,
+                                Duration = film.Duration,
+                                Description = film.Description,
                                 Genres = genres
                             });
                         }
@@ -62,7 +57,7 @@ namespace MovieT.Controllers
             }
             catch (Exception)
             {
-                TempData["Foutmelding"] = "Er is een fout opgetreden bij het ophalen van de films. Probeer het later opnieuw.";
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het ophalen van de films.";
                 return View("Error");
             }
         }
@@ -71,18 +66,17 @@ namespace MovieT.Controllers
         {
             try
             {
-                var FilmModel = _FilmModelService.GetById(id);
-
-                if (FilmModel == null)
+                var film = _filmService.GetById(id);
+                if (film == null)
                     return NotFound();
 
                 var viewModel = new FilmModelViewModel
                 {
-                    Id = FilmModel.Id,
-                    Title = FilmModel.Title,
-                    ReleaseDate = FilmModel.ReleaseDate,
-                    Duration = FilmModel.Duration,
-                    Description = FilmModel.Description
+                    Id = film.Id,
+                    Title = film.Title,
+                    ReleaseDate = film.ReleaseDate,
+                    Duration = film.Duration,
+                    Description = film.Description
                 };
 
                 return View(viewModel);
@@ -98,23 +92,23 @@ namespace MovieT.Controllers
         {
             try
             {
-                var FilmModels = _FilmModelService.Search(query);
+                var films = _filmService.Search(query);
                 var allGenres = _genreService.GetAll();
                 var viewModels = new List<FilmModelViewModel>();
 
-                foreach (var FilmModel in FilmModels)
+                foreach (var film in films)
                 {
-                    var genres = _genreService.GetByFilmId(FilmModel.Id);
+                    var genres = _genreService.GetByFilmId(film.Id);
 
-                    if (!viewModels.Any(v => v.Id == FilmModel.Id))
+                    if (!viewModels.Any(v => v.Id == film.Id))
                     {
                         viewModels.Add(new FilmModelViewModel
                         {
-                            Id = FilmModel.Id,
-                            Title = FilmModel.Title,
-                            ReleaseDate = FilmModel.ReleaseDate,
-                            Duration = FilmModel.Duration,
-                            Description = FilmModel.Description,
+                            Id = film.Id,
+                            Title = film.Title,
+                            ReleaseDate = film.ReleaseDate,
+                            Duration = film.Duration,
+                            Description = film.Description,
                             Genres = genres
                         });
                     }
@@ -128,34 +122,6 @@ namespace MovieT.Controllers
             catch (Exception)
             {
                 TempData["Foutmelding"] = "Er is een fout opgetreden bij het zoeken naar films.";
-                return View("Error");
-            }
-        }
-
-        public IActionResult AddToWatchingList(int userId, int FilmModelId)
-        {
-            try
-            {
-                _FilmModelService.AddToWatchingList(userId, FilmModelId);
-                return RedirectToAction("Index", "Film");
-            }
-            catch (Exception)
-            {
-                TempData["Foutmelding"] = "Er is een fout opgetreden bij het toevoegen aan je watchinglist.";
-                return View("Error");
-            }
-        }
-
-        public IActionResult AddToWatchedList(int userId, int FilmModelId)
-        {
-            try
-            {
-                _FilmModelService.AddToWatchedList(userId, FilmModelId);
-                return RedirectToAction("Index", "Film");
-            }
-            catch (Exception)
-            {
-                TempData["Foutmelding"] = "Er is een fout opgetreden bij het toevoegen aan je watchedlist.";
                 return View("Error");
             }
         }
