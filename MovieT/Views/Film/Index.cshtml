@@ -6,13 +6,16 @@
 }
 
 <h1>Films</h1>
+
 <form method="get" asp-action="Search">
     <input type="text" name="query" placeholder="Zoek film..." />
     <button type="submit">Zoeken</button>
 </form>
+
 <form method="get" asp-action="Index">
     <select name="genreId">
         <option value="">Alle genres</option>
+
         @foreach (var genre in genres)
         {
             if (ViewBag.SelectedGenre == genre.Id)
@@ -24,19 +27,53 @@
                 <option value="@genre.Id">@genre.Naam</option>
             }
         }
+
     </select>
+
     <button type="submit">Filter</button>
 </form>
+
 <ul>
     @foreach (var FilmModel in Model)
     {
         <li>
+
             <strong>@FilmModel.Title</strong> <br />
-            <em>Genres: @string.Join(", ", FilmModel.Genres)</em> <br />
-            <a asp-action="Details" asp-route-id="@FilmModel.Id">Details</a> |
-            <a asp-controller="WatchingList" asp-action="AddFilm" asp-route-userId="1" asp-route-filmId="@FilmModel.Id" asp-route-title="@FilmModel.Title">
-                Add to Watching List
+
+            <em>
+                Genres: @string.Join(", ", FilmModel.Genres)
+            </em>
+
+            <br />
+
+            <a asp-action="Details" asp-route-id="@FilmModel.Id">
+                Details
             </a>
+
+            |
+
+            <a asp-controller="WatchingList"
+               asp-action="AddFilm"
+               asp-route-userId="1"
+               asp-route-filmId="@FilmModel.Id"
+               asp-route-title="@FilmModel.Title">
+
+                Add to Watching List
+
+            </a>
+
+            |
+
+            <a asp-controller="WatchedList"
+               asp-action="Add"
+               asp-route-filmId="@FilmModel.Id"
+               asp-route-title="@FilmModel.Title"
+               asp-route-type="Film">
+
+                Add to Watched List
+
+            </a>
+
         </li>
     }
 </ul>
