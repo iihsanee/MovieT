@@ -3,13 +3,13 @@
     public class UserModel
     {
         public int Id { get; }
-        public string Naam { get; }
+        public string Gebruikersnaam { get; }
         public string Wachtwoord { get; }
 
-        public UserModel(int id, string naam, string wachtwoord)
+        public UserModel(int id, string gebruikersnaam, string wachtwoord)
         {
             Id = id;
-            Naam = naam;
+            Gebruikersnaam = gebruikersnaam;
             Wachtwoord = wachtwoord;
         }
     }

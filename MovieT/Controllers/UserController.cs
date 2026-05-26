@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using serviceLibary.Services;
 using MovieT.ViewModels;
-using System.Collections.Generic;
 using System.Text.Json;
 using DAL.Repositories;
 
@@ -48,7 +45,7 @@ namespace MovieT.Controllers
                 var viewModel = new UserViewModel
                 {
                     Id = user.Id,
-                    Gebruikersnaam = user.Naam,
+                    Gebruikersnaam = user.Gebruikersnaam,
                     WatchingList = watchingList,
                     WatchedList = watchedList
                 };
@@ -76,25 +73,13 @@ namespace MovieT.Controllers
 
             try
             {
-                if (_userService.UsernameExists(viewModel.Gebruikersnaam))
+                var fout = _userService.RegistreerGebruiker(viewModel.Gebruikersnaam, viewModel.Wachtwoord, viewModel.BevestigWachtwoord);
+                if (fout != null)
                 {
-                    ModelState.AddModelError(string.Empty, "Deze gebruikersnaam is al in gebruik.");
+                    ModelState.AddModelError(string.Empty, fout);
                     return View("Index", new UserViewModel());
                 }
 
-                if (viewModel.Wachtwoord.Length < 8)
-                {
-                    ModelState.AddModelError(string.Empty, "Het wachtwoord moet minimaal 8 tekens bevatten.");
-                    return View("Index", new UserViewModel());
-                }
-
-                if (viewModel.Wachtwoord != viewModel.BevestigWachtwoord)
-                {
-                    ModelState.AddModelError(string.Empty, "De wachtwoorden komen niet overeen.");
-                    return View("Index", new UserViewModel());
-                }
-
-                _userService.RegistreerGebruiker(viewModel.Gebruikersnaam, viewModel.Wachtwoord);
                 TempData["Melding"] = "Je account is aangemaakt! Log nu in.";
                 return RedirectToAction("Login");
             }

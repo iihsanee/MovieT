@@ -11,7 +11,9 @@ namespace unit_test.FakeRepositories
             new WatchingListDTO(1, 1, null, "Inception", "Film"),
             new WatchingListDTO(1, null, 1, "Breaking Bad", "Serie")
         };
+
         public List<WatchingListDTO> GetByUser(int userId) => _items.FindAll(i => i.UserId == userId);
+
         public void Add(int userId, int? filmId, int? serieId)
         {
             _items.Add(new WatchingListDTO(
@@ -21,6 +23,15 @@ namespace unit_test.FakeRepositories
                 "Test",
                 filmId.HasValue ? "Film" : "Serie"
             ));
+        }
+
+        public void Remove(int userId, int? filmId, int? serieId)
+        {
+            _items.RemoveAll(i =>
+                i.UserId == userId &&
+                i.FilmId == filmId &&
+                i.SerieId == serieId
+            );
         }
     }
 }

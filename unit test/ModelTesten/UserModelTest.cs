@@ -19,7 +19,7 @@ namespace unit_test.ModelTesten
 
             // Assert
             Assert.AreEqual(id, user.Id);
-            Assert.AreEqual(naam, user.Naam);
+            Assert.AreEqual(naam, user.Gebruikersnaam);
             Assert.AreEqual(wachtwoord, user.Wachtwoord);
         }
     }

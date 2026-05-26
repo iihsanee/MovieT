@@ -16,14 +16,14 @@ namespace serviceLibary.Services
         {
             var dto = _repository.GetById(id);
             if (dto == null) return null;
-            return new UserModel(dto.Id, dto.Naam, dto.Wachtwoord);
+            return new UserModel(dto.Id, dto.Gebruikersnaam, dto.Wachtwoord);
         }
 
         public UserModel? GetByNaam(string naam)
         {
             var dto = _repository.GetByNaam(naam);
             if (dto == null) return null;
-            return new UserModel(dto.Id, dto.Naam, dto.Wachtwoord);
+            return new UserModel(dto.Id, dto.Gebruikersnaam, dto.Wachtwoord);
         }
 
         public bool UsernameExists(string naam)
@@ -31,9 +31,19 @@ namespace serviceLibary.Services
             return _repository.UsernameExists(naam);
         }
 
-        public void RegistreerGebruiker(string naam, string wachtwoord)
+        public string? RegistreerGebruiker(string naam, string wachtwoord, string bevestigWachtwoord)
         {
+            if (wachtwoord != bevestigWachtwoord)
+                return "De wachtwoorden komen niet overeen.";
+
+            if (wachtwoord.Length < 8)
+                return "Het wachtwoord moet minimaal 8 tekens bevatten.";
+
+            if (_repository.UsernameExists(naam))
+                return "Deze gebruikersnaam is al in gebruik.";
+
             _repository.AddUser(naam, wachtwoord);
+            return null;
         }
     }
 }
