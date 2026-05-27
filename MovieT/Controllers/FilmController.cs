@@ -10,14 +10,14 @@ namespace MovieT.Controllers
 {
     public class FilmController : Controller
     {
-        private readonly FilmModel _filmService;
+        private readonly FilmService _filmService;
         private readonly GenreService _genreService;
 
         public FilmController(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new System.Exception("ConnectionString 'DefaultConnection' not found");
-            _filmService = new FilmModel(new FilmModelRepository(connectionString));
+            _filmService = new FilmService(new FilmModelRepository(connectionString));
             _genreService = new GenreService(new GenreRepository(connectionString));
         }
 

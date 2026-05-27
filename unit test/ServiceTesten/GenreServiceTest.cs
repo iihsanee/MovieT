@@ -13,7 +13,7 @@ namespace unit_test.ServiceTesten
             var repo = new FakeGenreRepository();
             var service = new GenreService(repo);
             var result = service.GetAll();
-            Assert.HasCount(2, result);
+            Assert.AreEqual(2, result.Count);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace unit_test.ServiceTesten
             var service = new GenreService(repo);
             var result = service.GetByFilmId(1);
             Assert.IsNotNull(result);
-            Assert.HasCount(1, result);
+            Assert.AreEqual(1, result.Count);
             Assert.AreEqual("Thriller", result[0]);
         }
 
@@ -53,7 +53,7 @@ namespace unit_test.ServiceTesten
             var service = new GenreService(repo);
             var result = service.GetBySerieId(1);
             Assert.IsNotNull(result);
-            Assert.HasCount(1, result);
+            Assert.AreEqual(1, result.Count);
             Assert.AreEqual("Drama", result[0]);
         }
     }

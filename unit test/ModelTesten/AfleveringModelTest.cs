@@ -9,13 +9,22 @@ namespace unit_test.ModelTesten
         [TestMethod]
         public void AfleveringModel_Constructor_SetsPropertiesCorrectly()
         {
-            var model = new AfleveringModel(1, 1, "Pilot", 1, 45);
+            // Arrange
+            var id = 1;
+            var seizoenId = 1;
+            var titel = "Pilot";
+            var afleveringsnummer = 1;
+            var duurtijd = 45;
 
-            Assert.AreEqual(1, model.Id);
-            Assert.AreEqual(1, model.SeizoenId);
-            Assert.AreEqual("Pilot", model.Titel);
-            Assert.AreEqual(1, model.Afleveringsnummer);
-            Assert.AreEqual(45, model.Duurtijd);
+            // Act
+            var model = new AfleveringModel(id, seizoenId, titel, afleveringsnummer, duurtijd);
+
+            // Assert
+            Assert.AreEqual(id, model.Id);
+            Assert.AreEqual(seizoenId, model.SeizoenId);
+            Assert.AreEqual(titel, model.Titel);
+            Assert.AreEqual(afleveringsnummer, model.Afleveringsnummer);
+            Assert.AreEqual(duurtijd, model.Duurtijd);
         }
     }
 }

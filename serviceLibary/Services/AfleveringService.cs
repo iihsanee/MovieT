@@ -1,5 +1,6 @@
 ﻿using Interfaces.Interfaces;
 using serviceLibary.Models;
+using DAL.DTO;
 
 namespace serviceLibary.Services
 {
@@ -15,7 +16,7 @@ namespace serviceLibary.Services
         public List<AfleveringModel> GetBySeizoenId(int seizoenId)
         {
             return _repository.GetBySeizoenId(seizoenId)
-                .Select(dto => new AfleveringModel(dto.Id, dto.SeizoenId, dto.Titel, dto.Afleveringsnummer, dto.Duurtijd))
+                .Select(dto => MapAflevering(dto))
                 .ToList();
         }
 
@@ -23,7 +24,18 @@ namespace serviceLibary.Services
         {
             var dto = _repository.GetById(id);
             if (dto == null) return null;
-            return new AfleveringModel(dto.Id, dto.SeizoenId, dto.Titel, dto.Afleveringsnummer, dto.Duurtijd);
+            return MapAflevering(dto);
+        }
+
+        private AfleveringModel MapAflevering(AfleveringDTO dto)
+        {
+            return new AfleveringModel(
+                id: dto.Id,
+                seizoenId: dto.SeizoenId,
+                titel: dto.Titel,
+                afleveringsnummer: dto.Afleveringsnummer,
+                duurtijd: dto.Duurtijd
+            );
         }
     }
 }

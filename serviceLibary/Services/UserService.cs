@@ -1,5 +1,6 @@
 ﻿using Interfaces.Interfaces;
 using serviceLibary.Models;
+using DAL.DTO;
 
 namespace serviceLibary.Services
 {
@@ -16,14 +17,14 @@ namespace serviceLibary.Services
         {
             var dto = _repository.GetById(id);
             if (dto == null) return null;
-            return new UserModel(dto.Id, dto.Gebruikersnaam, dto.Wachtwoord);
+            return MapUser(dto);
         }
 
         public UserModel? GetByNaam(string naam)
         {
             var dto = _repository.GetByNaam(naam);
             if (dto == null) return null;
-            return new UserModel(dto.Id, dto.Gebruikersnaam, dto.Wachtwoord);
+            return MapUser(dto);
         }
 
         public bool UsernameExists(string naam)
@@ -35,15 +36,21 @@ namespace serviceLibary.Services
         {
             if (wachtwoord != bevestigWachtwoord)
                 return "De wachtwoorden komen niet overeen.";
-
             if (wachtwoord.Length < 8)
                 return "Het wachtwoord moet minimaal 8 tekens bevatten.";
-
             if (_repository.UsernameExists(naam))
                 return "Deze gebruikersnaam is al in gebruik.";
-
             _repository.AddUser(naam, wachtwoord);
             return null;
+        }
+
+        private UserModel MapUser(UserDTO dto)
+        {
+            return new UserModel(
+                id: dto.Id,
+                gebruikersnaam: dto.Gebruikersnaam,
+                wachtwoord: dto.Wachtwoord
+            );
         }
     }
 }

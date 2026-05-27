@@ -1,126 +1,79 @@
-﻿using System.Collections.Generic;
-using DAL.DTO;
-using Interfaces.Interfaces;    
+﻿using Interfaces.Interfaces;
 using serviceLibary.Models;
+using DAL.DTO;
 
 namespace serviceLibary.Services
 {
-    public class FilmModel
+    public class FilmService
     {
         private readonly IFilmModelRepository _repository;
 
-        public FilmModel(IFilmModelRepository repository)
+        public FilmService(IFilmModelRepository repository)
         {
             _repository = repository;
         }
 
         public FilmModelModel? GetById(int id)
         {
-            FilmModelDTO? dto = _repository.GetById(id);
-            if (dto == null)
-                return null;
-            return new FilmModelModel(
-                dto.Id,
-                dto.Title,
-                dto.ReleaseDate,
-                dto.Duration,
-                dto.Description
-            );
+            var dto = _repository.GetById(id);
+            if (dto == null) return null;
+            return MapFilm(dto);
         }
 
         public List<FilmModelModel> GetAll()
         {
-            var dtos = _repository.GetAll();
-            var models = new List<FilmModelModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new FilmModelModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.GetAll()
+                .Select(dto => MapFilm(dto))
+                .ToList();
         }
 
         public List<FilmModelModel> Search(string query)
         {
-            var dtos = _repository.Search(query);
-            var models = new List<FilmModelModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new FilmModelModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.Search(query)
+                .Select(dto => MapFilm(dto))
+                .ToList();
         }
 
-        public void AddToWatchingList(int userId, int FilmModelId)
+        public void AddToWatchingList(int userId, int filmId)
         {
-            _repository.AddToWatchingList(userId, FilmModelId);
+            _repository.AddToWatchingList(userId, filmId);
         }
 
-        public void AddToWatchedList(int userId, int FilmModelId)
+        public void AddToWatchedList(int userId, int filmId)
         {
-            _repository.AddToWatchedList(userId, FilmModelId);
+            _repository.AddToWatchedList(userId, filmId);
         }
 
         public List<FilmModelModel> GetWatchingList(int userId)
         {
-            var dtos = _repository.GetWatchingList(userId);
-            var models = new List<FilmModelModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new FilmModelModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.GetWatchingList(userId)
+                .Select(dto => MapFilm(dto))
+                .ToList();
         }
 
         public List<FilmModelModel> GetWatchedList(int userId)
         {
-            var dtos = _repository.GetWatchedList(userId);
-            var models = new List<FilmModelModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new FilmModelModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.GetWatchedList(userId)
+                .Select(dto => MapFilm(dto))
+                .ToList();
         }
 
         public List<FilmModelModel> GetTop10Trending()
         {
-            var dtos = _repository.GetTop10Trending();
-            var models = new List<FilmModelModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new FilmModelModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.GetTop10Trending()
+                .Select(dto => MapFilm(dto))
+                .ToList();
+        }
+
+        private FilmModelModel MapFilm(FilmModelDTO dto)
+        {
+            return new FilmModelModel(
+                id: dto.Id,
+                title: dto.Title,
+                releaseDate: dto.ReleaseDate,
+                duration: dto.Duration,
+                description: dto.Description
+            );
         }
     }
 }

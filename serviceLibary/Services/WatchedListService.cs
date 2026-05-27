@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Interfaces.Interfaces;  
+﻿using Interfaces.Interfaces;
 using serviceLibary.Models;
+using DAL.DTO;
 
 namespace serviceLibary.Services
 {
@@ -15,24 +15,25 @@ namespace serviceLibary.Services
 
         public List<WatchedListModel> GetByUser(int userId)
         {
-            var dtos = _repository.GetByUser(userId);
-            var models = new List<WatchedListModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new WatchedListModel(
-                    dto.UserId,
-                    dto.FilmId,
-                    dto.SerieId,
-                    dto.Title,
-                    dto.Type
-                ));
-            }
-            return models;
+            return _repository.GetByUser(userId)
+                .Select(dto => MapWatchedList(dto))
+                .ToList();
         }
 
         public void Add(int userId, int? filmId, int? serieId)
         {
             _repository.Add(userId, filmId, serieId);
+        }
+
+        private WatchedListModel MapWatchedList(WatchedListDTO dto)
+        {
+            return new WatchedListModel(
+                userId: dto.UserId,
+                filmId: dto.FilmId,
+                serieId: dto.SerieId,
+                title: dto.Title,
+                type: dto.Type
+            );
         }
     }
 }

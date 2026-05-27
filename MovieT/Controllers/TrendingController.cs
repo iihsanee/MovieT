@@ -10,7 +10,7 @@ namespace MovieT.Controllers
 {
     public class TrendingController : Controller
     {
-        private readonly FilmModel _filmService;
+        private readonly FilmService _filmService;
         private readonly SerieService _serieService;
 
         public TrendingController(IConfiguration configuration)
@@ -19,7 +19,7 @@ namespace MovieT.Controllers
                 ?? throw new System.Exception("ConnectionString 'DefaultConnection' not found");
             var filmRepo = new FilmModelRepository(connectionString);
             var serieRepo = new SerieRepository(connectionString);
-            _filmService = new FilmModel(filmRepo);
+            _filmService = new FilmService(filmRepo);
             _serieService = new SerieService(serieRepo);
         }
 
@@ -52,7 +52,6 @@ namespace MovieT.Controllers
                 }
 
                 viewModels = viewModels.Take(10).ToList();
-
                 return View(viewModels);
             }
             catch (Exception)

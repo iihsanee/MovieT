@@ -9,13 +9,22 @@ namespace unit_test.ModelTesten
         [TestMethod]
         public void SeizoenModel_Constructor_SetsPropertiesCorrectly()
         {
-            var model = new SeizoenModel(1, 1, 1, 10, 2020);
+            // Arrange
+            var id = 1;
+            var serieId = 1;
+            var seizoennummer = 1;
+            var aantalAfleveringen = 10;
+            var jaartal = 2020;
 
-            Assert.AreEqual(1, model.Id);
-            Assert.AreEqual(1, model.SerieId);
-            Assert.AreEqual(1, model.Seizoennummer);
-            Assert.AreEqual(10, model.AantalAfleveringen);
-            Assert.AreEqual(2020, model.Jaartal);
+            // Act
+            var model = new SeizoenModel(id, serieId, seizoennummer, aantalAfleveringen, jaartal);
+
+            // Assert
+            Assert.AreEqual(id, model.Id);
+            Assert.AreEqual(serieId, model.SerieId);
+            Assert.AreEqual(seizoennummer, model.Seizoennummer);
+            Assert.AreEqual(aantalAfleveringen, model.AantalAfleveringen);
+            Assert.AreEqual(jaartal, model.Jaartal);
         }
     }
 }

@@ -11,16 +11,16 @@ namespace unit_test.ServiceTesten
         public void GetAll_ReturnsAllFilms()
         {
             var repo = new FakeFilmRepository();
-            var service = new FilmModel(repo);
+            var service = new FilmService(repo);
             var result = service.GetAll();
-            Assert.HasCount(2, result);
+            Assert.AreEqual(2, result.Count);
         }
 
         [TestMethod]
         public void GetById_ReturnsCorrectFilm()
         {
             var repo = new FakeFilmRepository();
-            var service = new FilmModel(repo);
+            var service = new FilmService(repo);
             var result = service.GetById(1);
             Assert.IsNotNull(result);
             Assert.AreEqual("Inception", result.Title);
@@ -30,7 +30,7 @@ namespace unit_test.ServiceTesten
         public void GetById_ReturnsNull_WhenFilmNotFound()
         {
             var repo = new FakeFilmRepository();
-            var service = new FilmModel(repo);
+            var service = new FilmService(repo);
             var result = service.GetById(99);
             Assert.IsNull(result);
         }
@@ -39,9 +39,9 @@ namespace unit_test.ServiceTesten
         public void Search_ReturnsMatchingFilms()
         {
             var repo = new FakeFilmRepository();
-            var service = new FilmModel(repo);
+            var service = new FilmService(repo);
             var result = service.Search("Inc");
-            Assert.HasCount(1, result);
+            Assert.AreEqual(1, result.Count);
             Assert.AreEqual("Inception", result[0].Title);
         }
 
@@ -49,7 +49,7 @@ namespace unit_test.ServiceTesten
         public void GetWatchingList_ReturnsFilmsInWatchingList()
         {
             var repo = new FakeFilmRepository();
-            var service = new FilmModel(repo);
+            var service = new FilmService(repo);
             var result = service.GetWatchingList(1);
             Assert.IsNotNull(result);
         }
@@ -58,7 +58,7 @@ namespace unit_test.ServiceTesten
         public void GetWatchedList_ReturnsFilmsInWatchedList()
         {
             var repo = new FakeFilmRepository();
-            var service = new FilmModel(repo);
+            var service = new FilmService(repo);
             var result = service.GetWatchedList(1);
             Assert.IsNotNull(result);
         }
@@ -67,7 +67,7 @@ namespace unit_test.ServiceTesten
         public void GetTop10Trending_ReturnsTrendingFilms()
         {
             var repo = new FakeFilmRepository();
-            var service = new FilmModel(repo);
+            var service = new FilmService(repo);
             var result = service.GetTop10Trending();
             Assert.IsNotNull(result);
         }
@@ -76,7 +76,7 @@ namespace unit_test.ServiceTesten
         public void AddToWatchingList_DoesNotThrowException()
         {
             var repo = new FakeFilmRepository();
-            var service = new FilmModel(repo);
+            var service = new FilmService(repo);
             try { service.AddToWatchingList(1, 1); }
             catch { Assert.Fail("AddToWatchingList gooide een exception"); }
         }
@@ -85,7 +85,7 @@ namespace unit_test.ServiceTesten
         public void AddToWatchedList_DoesNotThrowException()
         {
             var repo = new FakeFilmRepository();
-            var service = new FilmModel(repo);
+            var service = new FilmService(repo);
             try { service.AddToWatchedList(1, 1); }
             catch { Assert.Fail("AddToWatchedList gooide een exception"); }
         }

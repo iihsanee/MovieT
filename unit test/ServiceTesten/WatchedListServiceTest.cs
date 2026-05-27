@@ -14,7 +14,7 @@ namespace unit_test.ServiceTesten
             var service = new WatchedListService(repo);
             var result = service.GetByUser(1);
             Assert.IsNotNull(result);
-            Assert.HasCount(2, result);
+            Assert.AreEqual(2, result.Count);
         }
 
         [TestMethod]
@@ -24,7 +24,7 @@ namespace unit_test.ServiceTesten
             var service = new WatchedListService(repo);
             var result = service.GetByUser(99);
             Assert.IsNotNull(result);
-            Assert.HasCount(0, result);
+            Assert.AreEqual(0, result.Count);
         }
 
         [TestMethod]

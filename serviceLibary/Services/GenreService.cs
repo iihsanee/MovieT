@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using DAL.DTO;
-using Interfaces.Interfaces;
+﻿using Interfaces.Interfaces;
 using serviceLibary.Models;
+using DAL.DTO;
 
 namespace serviceLibary.Services
 {
@@ -16,43 +15,38 @@ namespace serviceLibary.Services
 
         public List<GenreModel> GetAll()
         {
-            var dtos = _repository.GetAll();
-            var models = new List<GenreModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new GenreModel(dto.Id, dto.Naam));
-            }
-            return models;
+            return _repository.GetAll()
+                .Select(dto => MapGenre(dto))
+                .ToList();
         }
 
         public GenreModel? GetById(int id)
         {
-            GenreDTO? dto = _repository.GetById(id);
-            if (dto == null)
-                return null;
-            return new GenreModel(dto.Id, dto.Naam);
+            var dto = _repository.GetById(id);
+            if (dto == null) return null;
+            return MapGenre(dto);
         }
 
         public List<string> GetByFilmId(int filmId)
         {
-            var dtos = _repository.GetByFilmId(filmId);
-            var namen = new List<string>();
-            foreach (var dto in dtos)
-            {
-                namen.Add(dto.Naam);
-            }
-            return namen;
+            return _repository.GetByFilmId(filmId)
+                .Select(dto => dto.Naam)
+                .ToList();
         }
 
         public List<string> GetBySerieId(int serieId)
         {
-            var dtos = _repository.GetBySerieId(serieId);
-            var namen = new List<string>();
-            foreach (var dto in dtos)
-            {
-                namen.Add(dto.Naam);
-            }
-            return namen;
+            return _repository.GetBySerieId(serieId)
+                .Select(dto => dto.Naam)
+                .ToList();
+        }
+
+        private GenreModel MapGenre(GenreDTO dto)
+        {
+            return new GenreModel(
+                id: dto.Id,
+                naam: dto.Naam
+            );
         }
     }
 }

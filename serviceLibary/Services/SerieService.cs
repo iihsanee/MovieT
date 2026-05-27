@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using DAL.DTO;
-using Interfaces.Interfaces;
+﻿using Interfaces.Interfaces;
 using serviceLibary.Models;
+using DAL.DTO;
 
 namespace serviceLibary.Services
 {
@@ -16,111 +15,65 @@ namespace serviceLibary.Services
 
         public SerieModel? GetById(int id)
         {
-            SerieDTO? dto = _repository.GetById(id);
-            if (dto == null)
-                return null;
-            return new SerieModel(
-                dto.Id,
-                dto.Title,
-                dto.ReleaseDate,
-                dto.Duration,
-                dto.Description
-            );
+            var dto = _repository.GetById(id);
+            if (dto == null) return null;
+            return MapSerie(dto);
         }
 
         public List<SerieModel> GetAll()
         {
-            var dtos = _repository.GetAll();
-            var models = new List<SerieModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new SerieModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.GetAll()
+                .Select(dto => MapSerie(dto))
+                .ToList();
         }
 
         public List<SerieModel> Search(string query)
         {
-            var dtos = _repository.Search(query);
-            var models = new List<SerieModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new SerieModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.Search(query)
+                .Select(dto => MapSerie(dto))
+                .ToList();
         }
 
-        public void AddToWatchingList(int userId, int SerieId)
+        public void AddToWatchingList(int userId, int serieId)
         {
-            _repository.AddToWatchingList(userId, SerieId);
+            _repository.AddToWatchingList(userId, serieId);
         }
 
-        public void AddToWatchedList(int userId, int SerieId)
+        public void AddToWatchedList(int userId, int serieId)
         {
-            _repository.AddToWatchedList(userId, SerieId);
+            _repository.AddToWatchedList(userId, serieId);
         }
 
         public List<SerieModel> GetWatchingList(int userId)
         {
-            var dtos = _repository.GetWatchingList(userId);
-            var models = new List<SerieModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new SerieModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.GetWatchingList(userId)
+                .Select(dto => MapSerie(dto))
+                .ToList();
         }
 
         public List<SerieModel> GetWatchedList(int userId)
         {
-            var dtos = _repository.GetWatchedList(userId);
-            var models = new List<SerieModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new SerieModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.GetWatchedList(userId)
+                .Select(dto => MapSerie(dto))
+                .ToList();
         }
 
         public List<SerieModel> GetTop10Trending()
         {
-            var dtos = _repository.GetTop10Trending();
-            var models = new List<SerieModel>();
-            foreach (var dto in dtos)
-            {
-                models.Add(new SerieModel(
-                    dto.Id,
-                    dto.Title,
-                    dto.ReleaseDate,
-                    dto.Duration,
-                    dto.Description
-                ));
-            }
-            return models;
+            return _repository.GetTop10Trending()
+                .Select(dto => MapSerie(dto))
+                .ToList();
+        }
+
+        private SerieModel MapSerie(SerieDTO dto)
+        {
+            return new SerieModel(
+                id: dto.Id,
+                title: dto.Title,
+                releaseDate: dto.ReleaseDate,
+                duration: dto.Duration,
+                description: dto.Description
+            );
         }
     }
 }
