@@ -15,7 +15,7 @@ namespace unit_test.ServiceTesten
 
             var result = service.GetBySeizoenId(1);
 
-            Assert.AreEqual(2, result.Count);
+            Assert.HasCount(2, result);
             Assert.AreEqual("Pilot", result[0].Titel);
         }
 
@@ -27,8 +27,8 @@ namespace unit_test.ServiceTesten
 
             var result = service.GetBySeizoenId(99);
 
-            Assert.AreEqual(0, result.Count);
-        }
+            Assert.HasCount(0, result);
+        }   
 
         [TestMethod]
         public void GetById_ReturnsCorrectAflevering()

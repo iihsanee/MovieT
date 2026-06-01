@@ -15,7 +15,7 @@ namespace unit_test.ServiceTesten
 
             var result = service.GetBySerieId(1);
 
-            Assert.AreEqual(2, result.Count);
+            Assert.HasCount(2, result);
             Assert.AreEqual(1, result[0].Seizoennummer);
         }
 
@@ -27,7 +27,7 @@ namespace unit_test.ServiceTesten
 
             var result = service.GetBySerieId(99);
 
-            Assert.AreEqual(0, result.Count);
+            Assert.HasCount(0, result);
         }
 
         [TestMethod]

@@ -13,7 +13,7 @@ namespace unit_test.ServiceTesten
             var repo = new FakeSerieRepository();
             var service = new SerieService(repo);
             var result = service.GetAll();
-            Assert.AreEqual(2, result.Count);
+            Assert.HasCount(2, result);
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace unit_test.ServiceTesten
             var repo = new FakeSerieRepository();
             var service = new SerieService(repo);
             var result = service.Search("Break");
-            Assert.AreEqual(1, result.Count);
+            Assert.HasCount(1, result);
             Assert.AreEqual("Breaking Bad", result[0].Title);
         }
 

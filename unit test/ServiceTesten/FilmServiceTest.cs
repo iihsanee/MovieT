@@ -13,7 +13,7 @@ namespace unit_test.ServiceTesten
             var repo = new FakeFilmRepository();
             var service = new FilmService(repo);
             var result = service.GetAll();
-            Assert.AreEqual(2, result.Count);
+            Assert.HasCount(2, result);
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace unit_test.ServiceTesten
             var repo = new FakeFilmRepository();
             var service = new FilmService(repo);
             var result = service.Search("Inc");
-            Assert.AreEqual(1, result.Count);
+            Assert.HasCount(1, result);
             Assert.AreEqual("Inception", result[0].Title);
         }
 
