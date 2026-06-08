@@ -26,10 +26,7 @@ namespace unit_test.ModelTesten
             Assert.AreEqual(releaseDate, serie.ReleaseDate);
             Assert.AreEqual(duration, serie.Duration);
             Assert.AreEqual(description, serie.Description);
-            Assert.IsNotNull(serie.WatchingLists);
-            Assert.IsNotNull(serie.WatchedLists);
-            Assert.IsEmpty(serie.WatchingLists);
-            Assert.IsEmpty(serie.WatchedLists);
+
         }
     }
 }

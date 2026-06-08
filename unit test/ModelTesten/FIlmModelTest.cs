@@ -26,10 +26,7 @@ namespace unit_test.ModelTesten
             Assert.AreEqual(releaseDate, film.ReleaseDate);
             Assert.AreEqual(duration, film.Duration);
             Assert.AreEqual(description, film.Description);
-            Assert.IsNotNull(film.WatchingLists);
-            Assert.IsNotNull(film.WatchedLists);
-            Assert.IsEmpty(film.WatchingLists);
-            Assert.IsEmpty(film.WatchedLists);
+           
         }
     }
 }

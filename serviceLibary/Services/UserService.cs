@@ -44,6 +44,13 @@ namespace serviceLibary.Services
             return null;
         }
 
+        public bool Login(string naam, string wachtwoord)
+        {
+            var dto = _repository.GetByNaam(naam);
+            if (dto == null) return false;
+            return _repository.VerifyPassword(wachtwoord, dto.Wachtwoord);
+        }
+
         private UserModel MapUser(UserDTO dto)
         {
             return new UserModel(

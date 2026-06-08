@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using serviceLibary.Services;
 using MovieT.ViewModels;
 using DAL.Repositories;

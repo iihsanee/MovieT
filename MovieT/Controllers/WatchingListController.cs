@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MovieT.ViewModels;
 using DAL.Repositories;
+using serviceLibary.Services;
 
 namespace MovieT.Controllers
 {
     public class WatchingListController : Controller
     {
-        private readonly WatchingListRepository _watchingListRepo;
-        private readonly UserRepository _userRepo;
+        private readonly WatchingListService _watchingListService;
+        private readonly UserService _userService;
 
         public WatchingListController(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new Exception("ConnectionString 'DefaultConnection' not found");
-            _watchingListRepo = new WatchingListRepository(connectionString);
-            _userRepo = new UserRepository(connectionString);
+            _watchingListService = new WatchingListService(new WatchingListRepository(connectionString));
+            _userService = new UserService(new UserRepository(connectionString));
         }
 
         public IActionResult Index()
@@ -27,11 +27,11 @@ namespace MovieT.Controllers
                 if (gebruikersnaam == null)
                     return RedirectToAction("Login", "User");
 
-                var user = _userRepo.GetByNaam(gebruikersnaam);
+                var user = _userService.GetByNaam(gebruikersnaam);
                 if (user == null)
                     return RedirectToAction("Login", "User");
 
-                var list = _watchingListRepo.GetByUser(user.Id);
+                var list = _watchingListService.GetByUser(user.Id);
                 var viewModels = list.Select(x => new WatchingListViewModel
                 {
                     UserId = x.UserId,
@@ -61,11 +61,11 @@ namespace MovieT.Controllers
                 }
 
                 var gebruikersnaam = HttpContext.Session.GetString("Gebruiker");
-                var user = _userRepo.GetByNaam(gebruikersnaam!);
+                var user = _userService.GetByNaam(gebruikersnaam!);
                 if (user == null)
                     return RedirectToAction("Login", "User");
 
-                _watchingListRepo.Add(user.Id, filmId, null);
+                _watchingListService.Add(user.Id, filmId, null);
                 return RedirectToAction("Index", "Film");
             }
             catch (Exception)
@@ -86,11 +86,11 @@ namespace MovieT.Controllers
                 }
 
                 var gebruikersnaam = HttpContext.Session.GetString("Gebruiker");
-                var user = _userRepo.GetByNaam(gebruikersnaam!);
+                var user = _userService.GetByNaam(gebruikersnaam!);
                 if (user == null)
                     return RedirectToAction("Login", "User");
 
-                _watchingListRepo.Add(user.Id, null, serieId);
+                _watchingListService.Add(user.Id, null, serieId);
                 return RedirectToAction("Index", "Serie");
             }
             catch (Exception)
@@ -108,11 +108,10 @@ namespace MovieT.Controllers
                 if (gebruikersnaam == null)
                     return RedirectToAction("Login", "User");
 
-                var user = _userRepo.GetByNaam(gebruikersnaam);
+                var user = _userService.GetByNaam(gebruikersnaam);
                 if (user == null)
                     return RedirectToAction("Login", "User");
 
-                _watchingListRepo.Remove(user.Id, filmId, serieId);
 
                 return RedirectToAction("Add", "WatchedList", new
                 {

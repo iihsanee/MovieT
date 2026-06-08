@@ -1,4 +1,5 @@
 ﻿using DAL.DTO;
+
 namespace Interfaces.Interfaces
 {
     public interface IUserRepository
@@ -7,5 +8,6 @@ namespace Interfaces.Interfaces
         UserDTO? GetByNaam(string naam);
         bool UsernameExists(string naam);
         void AddUser(string naam, string wachtwoord);
+        bool VerifyPassword(string wachtwoord, string hashedWachtwoord);
     }
 }
