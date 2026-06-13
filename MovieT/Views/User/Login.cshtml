@@ -4,10 +4,17 @@
 {
     <p style="color:green">@TempData["Melding"]</p>
 }
-
 @if (TempData["Foutmelding"] != null)
 {
     <p style="color:red">@TempData["Foutmelding"]</p>
+}
+@if (TempData["Fout"] != null)
+{
+    <p style="color:red">@TempData["Fout"]</p>
+}
+@if (TempData["Succes"] != null)
+{
+    <p style="color:green">@TempData["Succes"]</p>
 }
 
 <h2>Inloggen</h2>
@@ -22,3 +29,5 @@
     </div>
     <button type="submit">Inloggen</button>
 </form>
+
+<a href="@Url.Action("WachtwoordVergeten", "User")">Wachtwoord vergeten?</a>

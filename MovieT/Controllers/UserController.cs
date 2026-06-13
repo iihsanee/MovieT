@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using serviceLibary.Services;
+using servicelibrary.Services;
 using MovieT.ViewModels;
 using System.Text.Json;
 using DAL.Repositories;
@@ -9,110 +10,97 @@ namespace MovieT.Controllers
     public class UserController : Controller
     {
         private readonly UserService _userService;
+        private readonly WachtwoordResetService _wachtwoordResetService;
+        private readonly EmailService _emailService;
+        private readonly IConfiguration _configuration;
 
         public UserController(IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection")
-                ?? throw new Exception("ConnectionString 'DefaultConnection' not found");
-            _userService = new UserService(new UserRepository(connectionString));
+            _configuration = configuration;
+            string connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new Exception("ConnectionString niet gevonden");
+
+            var userRepository = new UserRepository(connectionString);
+            var wachtwoordResetRepository = new WachtwoordResetRepository(connectionString);
+
+            _userService = new UserService(userRepository);
+            _wachtwoordResetService = new WachtwoordResetService(wachtwoordResetRepository, userRepository);
+            _emailService = new EmailService(configuration);
         }
 
-        public IActionResult Index()
-        {
-            try
-            {
-                var gebruikersnaam = HttpContext.Session.GetString("Gebruiker");
-                if (gebruikersnaam == null)
-                    return RedirectToAction("Login");
-
-                var user = _userService.GetByNaam(gebruikersnaam);
-                if (user == null)
-                    return RedirectToAction("Login");
-
-                var watchingListJson = HttpContext.Session.GetString("WatchingList");
-                var watchedListJson = HttpContext.Session.GetString("WatchedList");
-
-                var watchingList = watchingListJson != null
-                    ? JsonSerializer.Deserialize<List<WatchingListViewModel>>(watchingListJson) ?? new()
-                    : new List<WatchingListViewModel>();
-
-                var watchedList = watchedListJson != null
-                    ? JsonSerializer.Deserialize<List<WatchedListViewModel>>(watchedListJson) ?? new()
-                    : new List<WatchedListViewModel>();
-
-                var viewModel = new UserViewModel
-                {
-                    Id = user.Id,
-                    Gebruikersnaam = user.Gebruikersnaam,
-                    WatchingList = watchingList,
-                    WatchedList = watchedList
-                };
-
-                return View(viewModel);
-            }
-            catch (Exception)
-            {
-                TempData["Foutmelding"] = "Er is een fout opgetreden bij het ophalen van je profiel.";
-                return View("Error");
-            }
-        }
-
+        
         [HttpGet]
-        public IActionResult AanmeldFormulier()
-        {
-            return View("Index", new UserViewModel());
-        }
-
-        [HttpPost]
-        public IActionResult AccountAanmaken(UserViewModel viewModel)
-        {
-            if (!ModelState.IsValid)
-                return View("Index", new UserViewModel());
-
-            try
-            {
-                var fout = _userService.RegistreerGebruiker(viewModel.Gebruikersnaam, viewModel.Wachtwoord, viewModel.BevestigWachtwoord);
-                if (fout != null)
-                {
-                    ModelState.AddModelError(string.Empty, fout);
-                    return View("Index", new UserViewModel());
-                }
-
-                TempData["Melding"] = "Je account is aangemaakt! Log nu in.";
-                return RedirectToAction("Login");
-            }
-            catch (Exception)
-            {
-                TempData["Foutmelding"] = "Er is een fout opgetreden bij het aanmaken van je account.";
-                return View("Error");
-            }
-        }
-
-        [HttpGet]
-        public IActionResult Login()
+        public IActionResult WachtwoordVergeten()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Login(string gebruikersnaam, string wachtwoord)
+        public IActionResult WachtwoordVergeten(string email)
         {
-            var user = _userService.GetByNaam(gebruikersnaam);
-            if (user == null)
+            string? fout = _wachtwoordResetService.VraagResetAan(email);
+            if (fout != null)
             {
-                TempData["Foutmelding"] = "Gebruikersnaam bestaat niet.";
+                TempData["Fout"] = fout;
                 return View();
             }
 
-            var loginResult = _userService.Login(gebruikersnaam, wachtwoord);
-            if (!loginResult)
+            // Token ophalen om de URL mee te bouwen
+            var resetModel = _wachtwoordResetService.GetByEmail(email);
+            if (resetModel != null)
             {
-                TempData["Foutmelding"] = "Wachtwoord is onjuist.";
+                string resetUrl = Url.Action("WachtwoordResetten", "User",
+                    new { token = resetModel.ResetToken }, Request.Scheme)!;
+
+                _emailService.StuurResetEmail(email, resetModel.ResetToken, resetUrl);
+            }
+
+            TempData["Succes"] = "Als dit e-mailadres bekend is, ontvang je een reset link.";
+            return RedirectToAction("Login");
+        }
+
+        // STAP 2 — Gebruiker klikt op link in email
+        [HttpGet]
+        public IActionResult WachtwoordResetten(string token)
+        {
+            string? fout = _wachtwoordResetService.ValideerToken(token);
+            if (fout != null)
+            {
+                TempData["Fout"] = fout;
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.Token = token;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult WachtwoordResetten(string token, string nieuwWachtwoord, string bevestigWachtwoord)
+        {
+            string? fout = _wachtwoordResetService.ValideerToken(token);
+            if (fout != null)
+            {
+                TempData["Fout"] = fout;
+                return RedirectToAction("Login");
+            }
+
+            if (nieuwWachtwoord != bevestigWachtwoord)
+            {
+                TempData["Fout"] = "De wachtwoorden komen niet overeen.";
+                ViewBag.Token = token;
                 return View();
             }
 
-            HttpContext.Session.SetString("Gebruiker", gebruikersnaam);
-            return RedirectToAction("Index", "Home");
+            if (nieuwWachtwoord.Length < 8)
+            {
+                TempData["Fout"] = "Het wachtwoord moet minimaal 8 tekens bevatten.";
+                ViewBag.Token = token;
+                return View();
+            }
+
+            _wachtwoordResetService.ResetWachtwoord(token, nieuwWachtwoord);
+            TempData["Succes"] = "Je wachtwoord is succesvol gewijzigd. Je kunt nu inloggen.";
+            return RedirectToAction("Login");
         }
     }
 }

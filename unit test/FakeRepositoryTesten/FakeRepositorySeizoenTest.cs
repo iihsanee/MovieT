@@ -5,17 +5,28 @@ namespace unit_test.FakeRepositories
 {
     public class FakeSeizoenRepository : ISeizoenRepository
     {
-        private List<SeizoenDTO> _items = new List<SeizoenDTO>
+        public bool SimuleerLegeDatabase = false;
+
+        public List<SeizoenDTO> GetBySerieId(int serieId)
         {
-            new SeizoenDTO(1, 1, 1, 10, 2020),
-            new SeizoenDTO(2, 1, 2, 8, 2021),
-            new SeizoenDTO(3, 2, 1, 6, 2022)
-        };
+            if (SimuleerLegeDatabase) return new List<SeizoenDTO>();
+            return new List<SeizoenDTO>
+            {
+                new SeizoenDTO(1, 1, 1, 10, 2020),
+                new SeizoenDTO(2, 1, 2, 8, 2021),
+                new SeizoenDTO(3, 2, 1, 6, 2022)
+            }.FindAll(s => s.SerieId == serieId);
+        }
 
-        public List<SeizoenDTO> GetBySerieId(int serieId) =>
-            _items.FindAll(s => s.SerieId == serieId);
-
-        public SeizoenDTO? GetById(int id) =>
-            _items.FirstOrDefault(s => s.Id == id);
+        public SeizoenDTO? GetById(int id)
+        {
+            if (SimuleerLegeDatabase) return null;
+            return new List<SeizoenDTO>
+            {
+                new SeizoenDTO(1, 1, 1, 10, 2020),
+                new SeizoenDTO(2, 1, 2, 8, 2021),
+                new SeizoenDTO(3, 2, 1, 6, 2022)
+            }.FirstOrDefault(s => s.Id == id);
+        }
     }
 }

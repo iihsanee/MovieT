@@ -21,7 +21,7 @@ namespace DAL.Repositories
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "SELECT ID, Naam, Wachtwoord FROM Gebruiker WHERE ID = @id", con);
+                        "SELECT ID, Naam, Wachtwoord, Email FROM Gebruiker WHERE ID = @id", con);
                     cmd.Parameters.AddWithValue("@id", id);
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
@@ -29,7 +29,8 @@ namespace DAL.Repositories
                         return new UserDTO(
                             (int)reader["ID"],
                             reader["Naam"]?.ToString() ?? string.Empty,
-                            reader["Wachtwoord"]?.ToString() ?? string.Empty
+                            reader["Wachtwoord"]?.ToString() ?? string.Empty,
+                            reader["Email"]?.ToString() ?? string.Empty
                         );
                     }
                 }
@@ -49,7 +50,7 @@ namespace DAL.Repositories
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "SELECT ID, Naam, Wachtwoord FROM Gebruiker WHERE Naam = @naam", con);
+                        "SELECT ID, Naam, Wachtwoord, Email FROM Gebruiker WHERE Naam = @naam", con);
                     cmd.Parameters.AddWithValue("@naam", naam);
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
@@ -57,7 +58,8 @@ namespace DAL.Repositories
                         return new UserDTO(
                             (int)reader["ID"],
                             reader["Naam"]?.ToString() ?? string.Empty,
-                            reader["Wachtwoord"]?.ToString() ?? string.Empty
+                            reader["Wachtwoord"]?.ToString() ?? string.Empty,
+                            reader["Email"]?.ToString() ?? string.Empty
                         );
                     }
                 }
@@ -65,6 +67,35 @@ namespace DAL.Repositories
             catch (SqlException ex)
             {
                 throw new Exception("Databasefout bij ophalen van gebruiker op naam.", ex);
+            }
+            return null;
+        }
+
+        public UserDTO? GetByEmail(string email)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand(
+                        "SELECT ID, Naam, Wachtwoord, Email FROM Gebruiker WHERE Email = @email", con);
+                    cmd.Parameters.AddWithValue("@email", email);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        return new UserDTO(
+                            (int)reader["ID"],
+                            reader["Naam"]?.ToString() ?? string.Empty,
+                            reader["Wachtwoord"]?.ToString() ?? string.Empty,
+                            reader["Email"]?.ToString() ?? string.Empty
+                        );
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Databasefout bij ophalen van gebruiker op email.", ex);
             }
             return null;
         }
@@ -107,6 +138,27 @@ namespace DAL.Repositories
             catch (SqlException ex)
             {
                 throw new Exception("Databasefout bij aanmaken van gebruiker.", ex);
+            }
+        }
+
+        public void UpdateWachtwoord(int gebruikerId, string nieuwWachtwoord)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    con.Open();
+                    string hashedWachtwoord = BCrypt.Net.BCrypt.HashPassword(nieuwWachtwoord);
+                    SqlCommand cmd = new SqlCommand(
+                        "UPDATE Gebruiker SET Wachtwoord = @wachtwoord WHERE ID = @id", con);
+                    cmd.Parameters.AddWithValue("@wachtwoord", hashedWachtwoord);
+                    cmd.Parameters.AddWithValue("@id", gebruikerId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Databasefout bij updaten van wachtwoord.", ex);
             }
         }
 
