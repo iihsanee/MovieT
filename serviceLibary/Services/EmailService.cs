@@ -16,7 +16,7 @@ namespace serviceLibary.Services
         {
             try
             {
-                string resetLink = $"https://i576606.luna.fhict.nl/User/ResetWachtwoord?token={resetToken}";
+                string resetLink = $"https://i576606.luna.fhict.nl/User/WachtwoordResetten?token={resetToken}";
                 string host = _config["MailServer:Host"] ?? throw new Exception("MailServer:Host niet gevonden in appsettings");
                 int port = int.Parse(_config["MailServer:Port"] ?? "587");
                 string vanAdres = _config["MailboxAddress:Address"] ?? throw new Exception("MailboxAddress:Address niet gevonden in appsettings");

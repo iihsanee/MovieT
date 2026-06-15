@@ -1,5 +1,4 @@
 ﻿@model MovieT.ViewModels.UserViewModel
-
 @if (TempData["Melding"] != null)
 {
     <p style="color:green">@TempData["Melding"]</p>
@@ -16,12 +15,11 @@
 {
     <p style="color:green">@TempData["Succes"]</p>
 }
-
 <h2>Inloggen</h2>
 <form asp-action="Login" method="post">
     <div>
-        <label>Gebruikersnaam</label>
-        <input name="gebruikersnaam" />
+        <label>E-mailadres</label>
+        <input name="email" type="email" />
     </div>
     <div>
         <label>Wachtwoord</label>
@@ -29,5 +27,4 @@
     </div>
     <button type="submit">Inloggen</button>
 </form>
-
 <a href="@Url.Action("WachtwoordVergeten", "User")">Wachtwoord vergeten?</a>

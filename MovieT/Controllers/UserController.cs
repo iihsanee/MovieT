@@ -16,16 +16,63 @@ namespace MovieT.Controllers
             _configuration = configuration;
             string connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new Exception("ConnectionString niet gevonden");
-
             var userRepository = new UserRepository(connectionString);
             var wachtwoordResetRepository = new WachtwoordResetRepository(connectionString);
-
             _userService = new UserService(userRepository);
             _wachtwoordResetService = new WachtwoordResetService(wachtwoordResetRepository, userRepository);
             _emailService = new EmailService(configuration);
         }
 
-        
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(string email, string wachtwoord)
+        {
+            bool succes = _userService.Login(email, wachtwoord);
+            if (!succes)
+            {
+                TempData["Fout"] = "Ongeldig e-mailadres of wachtwoord.";
+                return View();
+            }
+
+            var user = _userService.GetByEmail(email);
+            HttpContext.Session.SetInt32("UserId", user!.Id);
+            HttpContext.Session.SetString("Gebruiker", user.Email);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Register(string email, string wachtwoord, string bevestigWachtwoord)
+        {
+            string? fout = _userService.RegistreerGebruiker(email, wachtwoord, bevestigWachtwoord);
+            if (fout != null)
+            {
+                TempData["Fout"] = fout;
+                return View();
+            }
+
+            TempData["Succes"] = "Account aangemaakt! Je kunt nu inloggen.";
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
         [HttpGet]
         public IActionResult WachtwoordVergeten()
         {
@@ -42,13 +89,11 @@ namespace MovieT.Controllers
                 return View();
             }
 
-            // Token ophalen om de URL mee te bouwen
             var resetModel = _wachtwoordResetService.GetByEmail(email);
             if (resetModel != null)
             {
                 string resetUrl = Url.Action("WachtwoordResetten", "User",
                     new { token = resetModel.ResetToken }, Request.Scheme)!;
-
                 _emailService.StuurResetEmail(email, resetModel.ResetToken, resetUrl);
             }
 
@@ -56,7 +101,6 @@ namespace MovieT.Controllers
             return RedirectToAction("Login");
         }
 
-        // STAP 2 — Gebruiker klikt op link in email
         [HttpGet]
         public IActionResult WachtwoordResetten(string token)
         {

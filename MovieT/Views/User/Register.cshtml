@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Registreren";
+}
+
+<h2>Registreren</h2>
+
+@if (TempData["Fout"] != null)
+{
+    <div class="alert alert-danger">@TempData["Fout"]</div>
+}
+
+<form method="post">
+    <div class="mb-3">
+        <label>E-mailadres</label>
+        <input type="email" name="email" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label>Wachtwoord</label>
+        <input type="password" name="wachtwoord" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label>Bevestig wachtwoord</label>
+        <input type="password" name="bevestigWachtwoord" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Registreren</button>
+</form>
