@@ -42,35 +42,6 @@ namespace DAL.Repositories
             return null;
         }
 
-        public UserDTO? GetByNaam(string naam)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_connectionString))
-                {
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand(
-                        "SELECT ID, Naam, Wachtwoord, Email FROM Gebruiker WHERE Naam = @naam", con);
-                    cmd.Parameters.AddWithValue("@naam", naam);
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        return new UserDTO(
-                            (int)reader["ID"],
-                            reader["Naam"]?.ToString() ?? string.Empty,
-                            reader["Wachtwoord"]?.ToString() ?? string.Empty,
-                            reader["Email"]?.ToString() ?? string.Empty
-                        );
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                throw new Exception("Databasefout bij ophalen van gebruiker op naam.", ex);
-            }
-            return null;
-        }
-
         public UserDTO? GetByEmail(string email)
         {
             try
@@ -100,7 +71,7 @@ namespace DAL.Repositories
             return null;
         }
 
-        public bool UsernameExists(string naam)
+        public bool EmailExists(string email)
         {
             try
             {
@@ -108,19 +79,19 @@ namespace DAL.Repositories
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "SELECT COUNT(*) FROM Gebruiker WHERE Naam = @naam", con);
-                    cmd.Parameters.AddWithValue("@naam", naam);
+                        "SELECT COUNT(*) FROM Gebruiker WHERE Email = @email", con);
+                    cmd.Parameters.AddWithValue("@email", email);
                     int count = (int)cmd.ExecuteScalar();
                     return count > 0;
                 }
             }
             catch (SqlException ex)
             {
-                throw new Exception("Databasefout bij controleren van gebruikersnaam.", ex);
+                throw new Exception("Databasefout bij controleren van email.", ex);
             }
         }
 
-        public void AddUser(string naam, string wachtwoord)
+        public void AddUser(string naam, string email, string wachtwoord)
         {
             try
             {
@@ -129,8 +100,9 @@ namespace DAL.Repositories
                     con.Open();
                     string hashedWachtwoord = BCrypt.Net.BCrypt.HashPassword(wachtwoord);
                     SqlCommand cmd = new SqlCommand(
-                        "INSERT INTO Gebruiker (Naam, Wachtwoord) VALUES (@naam, @wachtwoord)", con);
+                        "INSERT INTO Gebruiker (Naam, Email, Wachtwoord) VALUES (@naam, @email, @wachtwoord)", con);
                     cmd.Parameters.AddWithValue("@naam", naam);
+                    cmd.Parameters.AddWithValue("@email", email);
                     cmd.Parameters.AddWithValue("@wachtwoord", hashedWachtwoord);
                     cmd.ExecuteNonQuery();
                 }
@@ -138,6 +110,35 @@ namespace DAL.Repositories
             catch (SqlException ex)
             {
                 throw new Exception("Databasefout bij aanmaken van gebruiker.", ex);
+            }
+        }
+
+        public UserDTO? Login(string email, string wachtwoord)
+        {
+            var user = GetByEmail(email);
+            if (user == null) return null;
+            if (!BCrypt.Net.BCrypt.Verify(wachtwoord, user.Wachtwoord)) return null;
+            return user;
+        }
+
+        public void Register(string email, string wachtwoord)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    con.Open();
+                    string hashedWachtwoord = BCrypt.Net.BCrypt.HashPassword(wachtwoord);
+                    SqlCommand cmd = new SqlCommand(
+                        "INSERT INTO Gebruiker (Email, Wachtwoord) VALUES (@email, @wachtwoord)", con);
+                    cmd.Parameters.AddWithValue("@email", email);
+                    cmd.Parameters.AddWithValue("@wachtwoord", hashedWachtwoord);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Databasefout bij registreren van gebruiker.", ex);
             }
         }
 

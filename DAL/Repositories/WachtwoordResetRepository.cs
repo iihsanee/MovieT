@@ -75,9 +75,8 @@ namespace DAL.Repositories
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "SELECT TOP 1 ID, Gebruiker_ID, ResetToken, AangemaaaktOp, Gebruikt " +
-                        "FROM WachtwoordReset WHERE Gebruiker_ID = @gebruikerId " +
-                        "ORDER BY AangemaaaktOp DESC", con);
+                        "SELECT ID, Gebruiker_ID, ResetToken, AangemaaaktOp, Gebruikt " +
+                        "FROM WachtwoordReset WHERE Gebruiker_ID = @gebruikerId", con);
                     cmd.Parameters.AddWithValue("@gebruikerId", gebruikerId);
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
@@ -94,7 +93,7 @@ namespace DAL.Repositories
             }
             catch (SqlException ex)
             {
-                throw new Exception("Databasefout bij ophalen van reset token op gebruikerId.", ex);
+                throw new Exception("Databasefout bij ophalen van reset token op gebruiker.", ex);
             }
             return null;
         }
@@ -115,6 +114,27 @@ namespace DAL.Repositories
             catch (SqlException ex)
             {
                 throw new Exception("Databasefout bij markeren van reset token als gebruikt.", ex);
+            }
+        }
+
+        public void UpdateWachtwoord(int gebruikerId, string nieuwWachtwoord)
+        {
+            try
+            {
+                string gehashedWachtwoord = BCrypt.Net.BCrypt.HashPassword(nieuwWachtwoord);
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand(
+                        "UPDATE Gebruiker SET Wachtwoord = @wachtwoord WHERE ID = @gebruikerId", con);
+                    cmd.Parameters.AddWithValue("@wachtwoord", gehashedWachtwoord);
+                    cmd.Parameters.AddWithValue("@gebruikerId", gebruikerId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Databasefout bij updaten van wachtwoord.", ex);
             }
         }
     }

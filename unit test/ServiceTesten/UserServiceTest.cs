@@ -7,7 +7,6 @@ namespace unit_test.ServiceTesten
     [TestClass]
     public class UserServiceTest
     {
-        // Happy flow
         [TestMethod]
         public void GetById_ReturnsCorrectUser()
         {
@@ -26,35 +25,35 @@ namespace unit_test.ServiceTesten
         }
 
         [TestMethod]
-        public void GetByNaam_ReturnsCorrectUser()
+        public void GetByEmail_ReturnsCorrectUser()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.GetByNaam("TestGebruiker");
+            var result = service.GetByEmail("test@student.fontys.nl");
             Assert.IsNotNull(result);
             Assert.AreEqual("TestGebruiker", result.Gebruikersnaam);
         }
 
         [TestMethod]
-        public void GetByNaam_ReturnsNull_WhenUserNotFound()
+        public void GetByEmail_ReturnsNull_WhenUserNotFound()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.GetByNaam("BestaatNiet");
+            var result = service.GetByEmail("bestaatnie@test.nl");
             Assert.IsNull(result);
         }
 
         [TestMethod]
-        public void UsernameExists_ReturnsTrue_WhenUserExists()
+        public void EmailExists_ReturnsTrue_WhenUserExists()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.UsernameExists("TestGebruiker");
+            var result = service.EmailExists("test@student.fontys.nl");
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public void UsernameExists_ReturnsFalse_WhenUserNotFound()
+        public void EmailExists_ReturnsFalse_WhenUserNotFound()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.UsernameExists("BestaatNiet");
+            var result = service.EmailExists("bestaatnie@test.nl");
             Assert.IsFalse(result);
         }
 
@@ -62,7 +61,7 @@ namespace unit_test.ServiceTesten
         public void RegistreerGebruiker_ReturnsNull_WhenSuccessful()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.RegistreerGebruiker("NieuweGebruiker", "Wachtwoord123", "Wachtwoord123");
+            var result = service.RegistreerGebruiker("NieuweGebruiker", "nieuw@test.nl", "Wachtwoord123", "Wachtwoord123");
             Assert.IsNull(result);
         }
 
@@ -70,24 +69,23 @@ namespace unit_test.ServiceTesten
         public void Login_ReturnsTrue_WhenCorrectCredentials()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.Login("TestGebruiker", "wachtwoord123");
+            var result = service.Login("test@student.fontys.nl", "wachtwoord123");
             Assert.IsTrue(result);
         }
 
-        // Uitzonderingen
         [TestMethod]
-        public void RegistreerGebruiker_ReturnsError_WhenUsernameExists()
+        public void RegistreerGebruiker_ReturnsError_WhenEmailExists()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.RegistreerGebruiker("TestGebruiker", "Wachtwoord123", "Wachtwoord123");
-            Assert.AreEqual("Deze gebruikersnaam is al in gebruik.", result);
+            var result = service.RegistreerGebruiker("NieuweGebruiker", "test@student.fontys.nl", "Wachtwoord123", "Wachtwoord123");
+            Assert.AreEqual("Dit e-mailadres is al in gebruik.", result);
         }
 
         [TestMethod]
         public void RegistreerGebruiker_ReturnsError_WhenPasswordTooShort()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.RegistreerGebruiker("NieuweGebruiker", "kort", "kort");
+            var result = service.RegistreerGebruiker("NieuweGebruiker", "nieuw@test.nl", "kort", "kort");
             Assert.AreEqual("Het wachtwoord moet minimaal 8 tekens bevatten.", result);
         }
 
@@ -95,7 +93,7 @@ namespace unit_test.ServiceTesten
         public void RegistreerGebruiker_ReturnsError_WhenPasswordsDoNotMatch()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.RegistreerGebruiker("NieuweGebruiker", "Wachtwoord123", "AndersWachtwoord");
+            var result = service.RegistreerGebruiker("NieuweGebruiker", "nieuw@test.nl", "Wachtwoord123", "AndersWachtwoord");
             Assert.AreEqual("De wachtwoorden komen niet overeen.", result);
         }
 
@@ -103,7 +101,7 @@ namespace unit_test.ServiceTesten
         public void Login_ReturnsFalse_WhenUserNotFound()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.Login("BestaatNiet", "Wachtwoord123");
+            var result = service.Login("bestaatnie@test.nl", "Wachtwoord123");
             Assert.IsFalse(result);
         }
 
@@ -111,7 +109,7 @@ namespace unit_test.ServiceTesten
         public void Login_ReturnsFalse_WhenWachtwoordOnjuist()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.Login("TestGebruiker", "VerkeerWachtwoord");
+            var result = service.Login("test@student.fontys.nl", "VerkeerWachtwoord");
             Assert.IsFalse(result);
         }
     }

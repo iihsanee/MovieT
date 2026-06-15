@@ -23,11 +23,11 @@ namespace MovieT.Controllers
         {
             try
             {
-                var gebruikersnaam = HttpContext.Session.GetString("Gebruiker");
-                if (gebruikersnaam == null)
+                var email = HttpContext.Session.GetString("Gebruiker");
+                if (email == null)
                     return RedirectToAction("Login", "User");
 
-                var user = _userService.GetByNaam(gebruikersnaam);
+                var user = _userService.GetByEmail(email);
                 if (user == null)
                     return RedirectToAction("Login", "User");
 
@@ -39,7 +39,6 @@ namespace MovieT.Controllers
                     Title = x.Title,
                     Type = x.Type
                 }).ToList();
-
                 return View(viewModels);
             }
             catch (Exception)
@@ -59,8 +58,8 @@ namespace MovieT.Controllers
                     return RedirectToAction("Login", "User");
                 }
 
-                var gebruikersnaam = HttpContext.Session.GetString("Gebruiker");
-                var user = _userService.GetByNaam(gebruikersnaam!);
+                var email = HttpContext.Session.GetString("Gebruiker");
+                var user = _userService.GetByEmail(email!);
                 if (user == null)
                     return RedirectToAction("Login", "User");
 

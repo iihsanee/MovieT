@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using serviceLibary.Services;
-using servicelibrary.Services;
-using MovieT.ViewModels;
-using System.Text.Json;
 using DAL.Repositories;
 
 namespace MovieT.Controllers

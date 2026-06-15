@@ -6,7 +6,7 @@ namespace Interfaces.Interfaces
     {
         void SlaResetTokenOp(WachtwoordResetDTO wachtwoordResetDTO);
         WachtwoordResetDTO? GetByToken(string token);
-        WachtwoordResetDTO? GetByGebruikerId(int gebruikerId);
         void MarkeerAlsGebruikt(string token);
+        WachtwoordResetDTO? GetByGebruikerId(int gebruikerId);
     }
 }
