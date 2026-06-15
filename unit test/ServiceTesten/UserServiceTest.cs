@@ -61,7 +61,7 @@ namespace unit_test.ServiceTesten
         public void RegistreerGebruiker_ReturnsNull_WhenSuccessful()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.RegistreerGebruiker("NieuweGebruiker", "nieuw@test.nl", "Wachtwoord123", "Wachtwoord123");
+            var result = service.RegistreerGebruiker("nieuw@test.nl", "Wachtwoord123", "Wachtwoord123");
             Assert.IsNull(result);
         }
 
@@ -77,7 +77,7 @@ namespace unit_test.ServiceTesten
         public void RegistreerGebruiker_ReturnsError_WhenEmailExists()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.RegistreerGebruiker("NieuweGebruiker", "test@student.fontys.nl", "Wachtwoord123", "Wachtwoord123");
+            var result = service.RegistreerGebruiker("test@student.fontys.nl", "Wachtwoord123", "Wachtwoord123");
             Assert.AreEqual("Dit e-mailadres is al in gebruik.", result);
         }
 
@@ -85,7 +85,7 @@ namespace unit_test.ServiceTesten
         public void RegistreerGebruiker_ReturnsError_WhenPasswordTooShort()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.RegistreerGebruiker("NieuweGebruiker", "nieuw@test.nl", "kort", "kort");
+            var result = service.RegistreerGebruiker("nieuw@test.nl", "kort", "kort");
             Assert.AreEqual("Het wachtwoord moet minimaal 8 tekens bevatten.", result);
         }
 
@@ -93,7 +93,7 @@ namespace unit_test.ServiceTesten
         public void RegistreerGebruiker_ReturnsError_WhenPasswordsDoNotMatch()
         {
             var service = new UserService(new FakeUserRepository());
-            var result = service.RegistreerGebruiker("NieuweGebruiker", "nieuw@test.nl", "Wachtwoord123", "AndersWachtwoord");
+            var result = service.RegistreerGebruiker("nieuw@test.nl", "Wachtwoord123", "AndersWachtwoord");
             Assert.AreEqual("De wachtwoorden komen niet overeen.", result);
         }
 
