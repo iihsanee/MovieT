@@ -1,10 +1,24 @@
 ﻿@model List<MovieT.ViewModels.TrendingViewModel>
-<h1>Top 10 Trending</h1>
-<ol>
-    @foreach (var item in Model)
-    {
-        <li>
-            <strong>@item.Title</strong> - @item.Type
-        </li>
-    }
-</ol>
+
+<div style="padding: 30px 20px 80px 20px;">
+    <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 24px;">🔥 Top 10 Trending</h1>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+        @{
+            int rank = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <div style="background: #1f1f1f; border: 1px solid #333; border-radius: 10px; padding: 18px 20px; display: flex; align-items: center; gap: 20px;"
+                 onmouseover="this.style.borderColor='#E50914';"
+                 onmouseout="this.style.borderColor='#333';">
+                <div style="font-size: 2rem; font-weight: 900; color: #E50914; width: 40px;">@rank</div>
+                <div>
+                    <div style="font-size: 1rem; font-weight: 700; color: #fff;">@item.Title</div>
+                    <div style="font-size: 0.8rem; color: #B3B3B3; margin-top: 4px;">@item.Type</div>
+                </div>
+            </div>
+            rank++;
+        }
+    </div>
+</div>

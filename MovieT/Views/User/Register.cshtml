@@ -1,26 +1,64 @@
-﻿@{
-    ViewData["Title"] = "Registreren";
-}
-
-<h2>Registreren</h2>
-
-@if (TempData["Fout"] != null)
+﻿@if (TempData["Fout"] != null)
 {
-    <div class="alert alert-danger">@TempData["Fout"]</div>
+    <p style="color: #E50914; margin-bottom: 12px;">@TempData["Fout"]</p>
 }
 
-<form method="post">
-    <div class="mb-3">
-        <label>E-mailadres</label>
-        <input type="email" name="email" class="form-control" required />
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+    <div style="background: #1f1f1f; border: 1px solid #333; border-radius: 12px; padding: 40px; width: 100%; max-width: 420px;">
+        <h2 style="color: #fff; font-weight: 800; margin-bottom: 24px; text-align: center;">Account aanmaken</h2>
+
+        <form asp-action="Register" method="post" style="display: flex; flex-direction: column; gap: 16px;"
+              onsubmit="return valideerRegister()">
+            <div>
+                <label style="color: #B3B3B3; font-size: 0.85rem; margin-bottom: 6px; display: block;">E-mailadres</label>
+                <input type="email" id="email" name="email" placeholder="jouw@email.nl"
+                       style="width: 100%; background: #2a2a2a; border: 1px solid #444; color: #fff; padding: 12px 14px; border-radius: 6px; box-sizing: border-box;" />
+            </div>
+            <div>
+                <label style="color: #B3B3B3; font-size: 0.85rem; margin-bottom: 6px; display: block;">Wachtwoord</label>
+                <input type="password" id="wachtwoord" name="wachtwoord" placeholder="••••••••"
+                       style="width: 100%; background: #2a2a2a; border: 1px solid #444; color: #fff; padding: 12px 14px; border-radius: 6px; box-sizing: border-box;" />
+            </div>
+            <div>
+                <label style="color: #B3B3B3; font-size: 0.85rem; margin-bottom: 6px; display: block;">Bevestig wachtwoord</label>
+                <input type="password" id="bevestigWachtwoord" name="bevestigWachtwoord" placeholder="••••••••"
+                       style="width: 100%; background: #2a2a2a; border: 1px solid #444; color: #fff; padding: 12px 14px; border-radius: 6px; box-sizing: border-box;" />
+            </div>
+            <p id="register-fout" style="color: #E50914; font-size: 0.85rem; display: none;"></p>
+            <button type="submit"
+                    style="background: #E50914; color: #ffffff; border: none; padding: 12px; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%;">
+                Registreren
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; color: #B3B3B3; font-size: 0.85rem;">
+            Al een account? <a href="/User/Login" style="color: #E50914; font-weight: 600;">Inloggen</a>
+        </div>
     </div>
-    <div class="mb-3">
-        <label>Wachtwoord</label>
-        <input type="password" name="wachtwoord" class="form-control" required />
-    </div>
-    <div class="mb-3">
-        <label>Bevestig wachtwoord</label>
-        <input type="password" name="bevestigWachtwoord" class="form-control" required />
-    </div>
-    <button type="submit" class="btn btn-primary">Registreren</button>
-</form>
+</div>
+
+<script>
+    function valideerRegister() {
+        var email = document.getElementById('email').value;
+        var wachtwoord = document.getElementById('wachtwoord').value;
+        var bevestig = document.getElementById('bevestigWachtwoord').value;
+        var fout = document.getElementById('register-fout');
+
+        if (!email || !wachtwoord || !bevestig) {
+            fout.textContent = 'Vul alle verplichte velden in.';
+            fout.style.display = 'block';
+            return false;
+        }
+        if (wachtwoord !== bevestig) {
+            fout.textContent = 'De wachtwoorden komen niet overeen.';
+            fout.style.display = 'block';
+            return false;
+        }
+        if (wachtwoord.length < 8) {
+            fout.textContent = 'Het wachtwoord moet minimaal 8 tekens bevatten.';
+            fout.style.display = 'block';
+            return false;
+        }
+        return true;
+    }
+</script>

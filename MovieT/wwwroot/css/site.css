@@ -1,31 +1,261 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+    --primary-color: #E50914;
+    --secondary-color: #221F1F;
+    --text-color: #FFFFFF;
+    --accent-color: #B81D24;
+    --light-text-color: #B3B3B3;
+    --border-color: #333333;
+    --bg-dark: #141414;
+    --bg-card: #1F1F1F;
+    --bg-hover: #2A2A2A;
+}
+
 html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-color);
+    font-size: 15px;
+    background: linear-gradient(135deg, #141414 0%, #1a0a0a 50%, #2d0a0a 100%);
+    min-height: 100vh;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+a {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+    a:hover {
+        color: var(--primary-color);
+    }
+
+p {
+    margin-bottom: 0;
+}
+
+img {
+    object-fit: cover;
+}
+
+button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.btn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+    .btn-primary:hover {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+
+.btn-outline-primary {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+.btn-outline-secondary {
+    background-color: transparent;
+    color: var(--text-color);
+    border-color: var(--light-text-color);
+}
+
+    .btn-outline-secondary:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-color);
+    }
+
+.btn-outline-danger {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+    .btn-outline-danger:hover {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+/* Navbar */
+.navbar {
+    background-color: #000000 !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 12px 24px;
+}
+
+.navbar-brand {
+    color: var(--primary-color) !important;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.nav-link {
+    color: var(--light-text-color) !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-right: 8px;
+    transition: color 0.2s;
+}
+
+    .nav-link:hover {
+        color: var(--text-color) !important;
+    }
+
+/* Container */
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+/* Cards voor films/series */
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    }
+
+/* Lijsten */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+    ul li {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        transition: background-color 0.2s;
+    }
+
+        ul li:hover {
+            background-color: var(--bg-hover);
+        }
+
+/* Headings */
+h1 {
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+h3 {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* Forms */
+.form-control {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: .75rem;
+    border-radius: 4px;
+}
+
+    .form-control:focus {
+        background-color: var(--bg-hover);
+        border-color: var(--primary-color);
+        color: var(--text-color);
+        box-shadow: 0 0 0 2px rgba(229,9,20,0.25);
+    }
+
+select.form-control, select {
+    background-color: var(--bg-card);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+input[type="text"], input[type="email"], input[type="password"] {
+    background-color: var(--bg-card);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+    input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+
+/* Footer */
+.footer {
+    background-color: #000;
+    color: var(--light-text-color);
+    border-top: 1px solid var(--border-color) !important;
+    padding: 16px 0;
+    font-size: 0.85rem;
+}
+
+/* Error pages */
+.error-page-minimal {
+    min-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem 2.5rem;
+    background: var(--bg-dark);
+}
+
+.error-page-code {
+    color: var(--primary-color);
+    font-size: clamp(4rem, 14vw, 8rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.08em;
+}
+
+.error-page-message {
+    color: var(--light-text-color);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 32rem;
+}
+
+@media (max-width: 576px) {
+    .error-page-minimal {
+        padding: 1.5rem;
+    }
 }

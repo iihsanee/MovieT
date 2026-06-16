@@ -2,19 +2,33 @@
     ViewData["Title"] = "Wachtwoord vergeten";
 }
 
-<h2>Wachtwoord vergeten</h2>
-
 @if (TempData["Fout"] != null)
 {
-    <div class="alert alert-danger">@TempData["Fout"]</div>
+    <p style="color: #E50914; margin-bottom: 12px;">@TempData["Fout"]</p>
+}
+@if (TempData["Succes"] != null)
+{
+    <p style="color: #28a745; margin-bottom: 12px;">@TempData["Succes"]</p>
 }
 
-<form method="post">
-    <div class="mb-3">
-        <label for="email">E-mailadres</label>
-        <input type="email" id="email" name="email" class="form-control" required />
-    </div>
-    <button type="submit" class="btn btn-primary">Verstuur reset link</button>
-</form>
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+    <div style="background: #1f1f1f; border: 1px solid #333; border-radius: 12px; padding: 40px; width: 100%; max-width: 420px;">
+        <h2 style="color: #fff; font-weight: 800; margin-bottom: 24px; text-align: center;">Wachtwoord vergeten</h2>
 
-<a href="@Url.Action("Login", "User")">Terug naar inloggen</a>
+        <form method="post" style="display: flex; flex-direction: column; gap: 16px;">
+            <div>
+                <label style="color: #B3B3B3; font-size: 0.85rem; margin-bottom: 6px; display: block;">E-mailadres</label>
+                <input type="email" name="email" placeholder="jouw@email.nl" required
+                       style="width: 100%; background: #2a2a2a; border: 1px solid #444; color: #fff; padding: 12px 14px; border-radius: 6px; box-sizing: border-box;" />
+            </div>
+            <button type="submit"
+                    style="background: #E50914; color: #ffffff; border: none; padding: 12px; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%;">
+                Verstuur reset link
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/User/Login" style="color: #B3B3B3; font-size: 0.85rem;">Terug naar inloggen</a>
+        </div>
+    </div>
+</div>

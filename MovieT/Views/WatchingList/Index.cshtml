@@ -1,22 +1,44 @@
 ﻿@model List<MovieT.ViewModels.WatchingListViewModel>
-<h1>Mijn Watching List</h1>
-<ul>
-    @foreach (var item in Model)
+
+<div style="padding: 30px 20px 80px 20px;">
+    <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 24px;">👁 Mijn Watching List</h1>
+
+    @if (!Model.Any())
     {
-        <li>
-            <strong>@item.Title</strong> - @item.Type
-            <a asp-controller="WatchingList" asp-action="MoveToWatched"
-               asp-route-filmId="@item.FilmId"
-               asp-route-serieId="@item.SerieId"
-               asp-route-title="@item.Title"
-               asp-route-type="@item.Type">
-                Mark as Watched
-            </a>
-            <a asp-controller="WatchingList" asp-action="Remove"
-               asp-route-filmId="@item.FilmId"
-               asp-route-serieId="@item.SerieId">
-                Verwijderen
-            </a>
-        </li>
+        <p style="color: #B3B3B3;">Je watching list is leeg.</p>
     }
-</ul>
+    else
+    {
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            @foreach (var item in Model)
+            {
+                <div style="background: #1f1f1f; border: 1px solid #333; border-radius: 10px; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center;"
+                     onmouseover="this.style.borderColor='#E50914';"
+                     onmouseout="this.style.borderColor='#333';">
+
+                    <div>
+                        <div style="font-size: 1rem; font-weight: 700; color: #fff;">@item.Title</div>
+                        <div style="font-size: 0.8rem; color: #B3B3B3; margin-top: 4px;">@item.Type</div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <a asp-controller="WatchingList" asp-action="MoveToWatched"
+                           asp-route-filmId="@item.FilmId"
+                           asp-route-serieId="@item.SerieId"
+                           asp-route-title="@item.Title"
+                           asp-route-type="@item.Type"
+                           style="background: #E50914; color: #fff; padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">
+                            ✅ Gezien
+                        </a>
+                        <a asp-controller="WatchingList" asp-action="Remove"
+                           asp-route-filmId="@item.FilmId"
+                           asp-route-serieId="@item.SerieId"
+                           style="background: #2a2a2a; color: #fff; padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; border: 1px solid #444;">
+                            🗑 Verwijderen
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
