@@ -9,6 +9,7 @@ namespace MovieT.Controllers
     public class WatchingListController : Controller
     {
         private readonly WatchingListService _watchingListService;
+        private readonly WatchedListService _watchedListService;
         private readonly UserService _userService;
 
         public WatchingListController(IConfiguration configuration)
@@ -16,6 +17,7 @@ namespace MovieT.Controllers
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new Exception("ConnectionString 'DefaultConnection' not found");
             _watchingListService = new WatchingListService(new WatchingListRepository(connectionString));
+            _watchedListService = new WatchedListService(new WatchedListRepository(connectionString));
             _userService = new UserService(new UserRepository(connectionString));
         }
 
@@ -112,17 +114,35 @@ namespace MovieT.Controllers
                 if (user == null)
                     return RedirectToAction("Login", "User");
 
-                return RedirectToAction("Add", "WatchedList", new
-                {
-                    filmId = filmId,
-                    serieId = serieId,
-                    title = title,
-                    type = type
-                });
+                _watchedListService.Add(user.Id, filmId, serieId);
+                _watchingListService.Remove(user.Id, filmId, serieId);
+                return RedirectToAction("Index", "WatchingList");
             }
             catch (Exception)
             {
                 TempData["Foutmelding"] = "Er is een fout opgetreden bij het verplaatsen naar je watchedlist.";
+                return View("Error");
+            }
+        }
+
+        public IActionResult Remove(int? filmId, int? serieId)
+        {
+            try
+            {
+                var email = HttpContext.Session.GetString("Gebruiker");
+                if (email == null)
+                    return RedirectToAction("Login", "User");
+
+                var user = _userService.GetByEmail(email);
+                if (user == null)
+                    return RedirectToAction("Login", "User");
+
+                _watchingListService.Remove(user.Id, filmId, serieId);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het verwijderen.";
                 return View("Error");
             }
         }

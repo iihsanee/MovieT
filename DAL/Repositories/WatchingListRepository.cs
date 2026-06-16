@@ -57,6 +57,26 @@ namespace DAL.Repositories
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 {
                     con.Open();
+
+                    // Check of het al bestaat
+                    SqlCommand checkCmd;
+                    if (filmId.HasValue)
+                    {
+                        checkCmd = new SqlCommand(
+                            "SELECT COUNT(*) FROM WatchingList WHERE UserID = @userId AND FilmModelID = @filmId", con);
+                        checkCmd.Parameters.AddWithValue("@userId", userId);
+                        checkCmd.Parameters.AddWithValue("@filmId", filmId);
+                    }
+                    else
+                    {
+                        checkCmd = new SqlCommand(
+                            "SELECT COUNT(*) FROM WatchingList WHERE UserID = @userId AND SerieID = @serieId", con);
+                        checkCmd.Parameters.AddWithValue("@userId", userId);
+                        checkCmd.Parameters.AddWithValue("@serieId", serieId);
+                    }
+                    int count = (int)checkCmd.ExecuteScalar();
+                    if (count > 0) return; // Al in lijst, niet toevoegen
+
                     SqlCommand cmd = new SqlCommand(
                         @"INSERT INTO WatchingList (UserID, FilmModelID, SerieID, Titel, Type)
                           SELECT @userId, @filmId, @serieId,

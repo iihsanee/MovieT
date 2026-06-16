@@ -5,6 +5,11 @@
     {
         <li>
             <strong>@item.Title</strong> - @item.Type
+            <a asp-controller="WatchedList" asp-action="Remove"
+               asp-route-filmId="@item.FilmId"
+               asp-route-serieId="@item.SerieId">
+                Verwijderen
+            </a>
         </li>
     }
 </ul>

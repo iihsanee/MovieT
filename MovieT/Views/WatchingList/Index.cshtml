@@ -12,6 +12,11 @@
                asp-route-type="@item.Type">
                 Mark as Watched
             </a>
+            <a asp-controller="WatchingList" asp-action="Remove"
+               asp-route-filmId="@item.FilmId"
+               asp-route-serieId="@item.SerieId">
+                Verwijderen
+            </a>
         </li>
     }
 </ul>

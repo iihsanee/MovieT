@@ -57,6 +57,25 @@ namespace DAL.Repositories
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 {
                     con.Open();
+                    // Check eerst of het al bestaat
+                    SqlCommand checkCmd;
+                    if (filmId.HasValue)
+                    {
+                        checkCmd = new SqlCommand(
+                            "SELECT COUNT(*) FROM WatchedList WHERE UserID = @userId AND FilmModelID = @filmId", con);
+                        checkCmd.Parameters.AddWithValue("@userId", userId);
+                        checkCmd.Parameters.AddWithValue("@filmId", filmId);
+                    }
+                    else
+                    {
+                        checkCmd = new SqlCommand(
+                            "SELECT COUNT(*) FROM WatchedList WHERE UserID = @userId AND SerieID = @serieId", con);
+                        checkCmd.Parameters.AddWithValue("@userId", userId);
+                        checkCmd.Parameters.AddWithValue("@serieId", serieId);
+                    }
+                    int count = (int)checkCmd.ExecuteScalar();
+                    if (count > 0) return; // Al in lijst, niet toevoegen
+
                     SqlCommand cmd = new SqlCommand(
                         @"INSERT INTO WatchedList (UserID, FilmModelID, SerieID, Titel, Type)
                           SELECT @userId, @filmId, @serieId,
@@ -74,6 +93,37 @@ namespace DAL.Repositories
             catch (SqlException ex)
             {
                 throw new Exception("Databasefout bij toevoegen aan watchedlist.", ex);
+            }
+        }
+
+        public void Remove(int userId, int? filmId, int? serieId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmd;
+                    if (filmId.HasValue)
+                    {
+                        cmd = new SqlCommand(
+                            "DELETE FROM WatchedList WHERE UserID = @userId AND FilmModelID = @filmId", con);
+                        cmd.Parameters.AddWithValue("@userId", userId);
+                        cmd.Parameters.AddWithValue("@filmId", filmId);
+                    }
+                    else
+                    {
+                        cmd = new SqlCommand(
+                            "DELETE FROM WatchedList WHERE UserID = @userId AND SerieID = @serieId", con);
+                        cmd.Parameters.AddWithValue("@userId", userId);
+                        cmd.Parameters.AddWithValue("@serieId", serieId);
+                    }
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Databasefout bij verwijderen uit watchedlist.", ex);
             }
         }
     }

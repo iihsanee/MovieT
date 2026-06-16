@@ -1,12 +1,10 @@
 ﻿using DAL.DTO;
 using Interfaces.Interfaces;
-
 namespace unit_test.FakeRepositories
 {
     public class FakeWatchedListRepository : IWatchedListRepository
     {
         public bool SimuleerLegeDatabase = false;
-
         private List<WatchedListDTO> _items = new List<WatchedListDTO>
         {
             new WatchedListDTO(1, 1, null, "Inception", "Film"),
@@ -26,6 +24,14 @@ namespace unit_test.FakeRepositories
                 "Test",
                 filmId.HasValue ? "Film" : "Serie"
             ));
+        }
+
+        public void Remove(int userId, int? filmId, int? serieId)
+        {
+            if (filmId.HasValue)
+                _items.RemoveAll(i => i.UserId == userId && i.FilmId == filmId);
+            else
+                _items.RemoveAll(i => i.UserId == userId && i.SerieId == serieId);
         }
     }
 }

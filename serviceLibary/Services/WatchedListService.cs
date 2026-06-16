@@ -25,6 +25,11 @@ namespace serviceLibary.Services
             _repository.Add(userId, filmId, serieId);
         }
 
+        public void Remove(int userId, int? filmId, int? serieId)
+        {
+            _repository.Remove(userId, filmId, serieId);
+        }
+
         private WatchedListModel MapWatchedList(WatchedListDTO dto)
         {
             return new WatchedListModel(

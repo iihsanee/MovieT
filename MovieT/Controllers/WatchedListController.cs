@@ -39,6 +39,7 @@ namespace MovieT.Controllers
                     Title = x.Title,
                     Type = x.Type
                 }).ToList();
+
                 return View(viewModels);
             }
             catch (Exception)
@@ -69,6 +70,28 @@ namespace MovieT.Controllers
             catch (Exception)
             {
                 TempData["Foutmelding"] = "Er is een fout opgetreden bij het toevoegen aan je watchedlist.";
+                return View("Error");
+            }
+        }
+
+        public IActionResult Remove(int? filmId, int? serieId)
+        {
+            try
+            {
+                var email = HttpContext.Session.GetString("Gebruiker");
+                if (email == null)
+                    return RedirectToAction("Login", "User");
+
+                var user = _userService.GetByEmail(email);
+                if (user == null)
+                    return RedirectToAction("Login", "User");
+
+                _watchedListService.Remove(user.Id, filmId, serieId);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["Foutmelding"] = "Er is een fout opgetreden bij het verwijderen.";
                 return View("Error");
             }
         }
