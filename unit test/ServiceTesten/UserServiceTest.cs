@@ -13,7 +13,7 @@ namespace unit_test.ServiceTesten
             var service = new UserService(new FakeUserRepository());
             var result = service.GetById(1);
             Assert.IsNotNull(result);
-            Assert.AreEqual("TestGebruiker", result.Gebruikersnaam);
+            Assert.AreEqual("test@student.fontys.nl", result.Email);
         }
 
         [TestMethod]
@@ -30,7 +30,7 @@ namespace unit_test.ServiceTesten
             var service = new UserService(new FakeUserRepository());
             var result = service.GetByEmail("test@student.fontys.nl");
             Assert.IsNotNull(result);
-            Assert.AreEqual("TestGebruiker", result.Gebruikersnaam);
+            Assert.AreEqual("test@student.fontys.nl", result.Email);
         }
 
         [TestMethod]

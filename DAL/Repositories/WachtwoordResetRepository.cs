@@ -21,7 +21,7 @@ namespace DAL.Repositories
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "INSERT INTO WachtwoordReset (Gebruiker_ID, ResetToken, AangemaaaktOp, Gebruikt) " +
+                        "INSERT INTO WachtwoordReset (Gebruiker_ID, ResetToken, AangemaaktOp, Gebruikt) " +
                         "VALUES (@gebruikerId, @resetToken, @aangemaaktOp, @gebruikt)", con);
                     cmd.Parameters.AddWithValue("@gebruikerId", wachtwoordResetDTO.GebruikerId);
                     cmd.Parameters.AddWithValue("@resetToken", wachtwoordResetDTO.ResetToken);
@@ -75,8 +75,9 @@ namespace DAL.Repositories
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "SELECT ID, Gebruiker_ID, ResetToken, AangemaaaktOp, Gebruikt " +
-                        "FROM WachtwoordReset WHERE Gebruiker_ID = @gebruikerId", con);
+                        "SELECT TOP 1 ID, Gebruiker_ID, ResetToken, AangemaaaktOp, Gebruikt " +
+                        "FROM WachtwoordReset WHERE Gebruiker_ID = @gebruikerId " +
+                        "ORDER BY AangemaaaktOp DESC", con);
                     cmd.Parameters.AddWithValue("@gebruikerId", gebruikerId);
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
@@ -114,6 +115,25 @@ namespace DAL.Repositories
             catch (SqlException ex)
             {
                 throw new Exception("Databasefout bij markeren van reset token als gebruikt.", ex);
+            }
+        }
+
+        public void VerwijderOudeTokens(int gebruikerId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand(
+                        "DELETE FROM WachtwoordReset WHERE Gebruiker_ID = @gebruikerId", con);
+                    cmd.Parameters.AddWithValue("@gebruikerId", gebruikerId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Databasefout bij verwijderen van oude tokens.", ex);
             }
         }
 

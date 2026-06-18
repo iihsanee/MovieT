@@ -21,14 +21,13 @@ namespace DAL.Repositories
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "SELECT ID, Naam, Wachtwoord, Email FROM Gebruiker WHERE ID = @id", con);
+                        "SELECT ID, Wachtwoord, Email FROM Gebruiker WHERE ID = @id", con);
                     cmd.Parameters.AddWithValue("@id", id);
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                     {
                         return new UserDTO(
                             (int)reader["ID"],
-                            reader["Naam"]?.ToString() ?? string.Empty,
                             reader["Wachtwoord"]?.ToString() ?? string.Empty,
                             reader["Email"]?.ToString() ?? string.Empty
                         );
@@ -50,14 +49,13 @@ namespace DAL.Repositories
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "SELECT ID, Naam, Wachtwoord, Email FROM Gebruiker WHERE Email = @email", con);
+                        "SELECT ID, Wachtwoord, Email FROM Gebruiker WHERE Email = @email", con);
                     cmd.Parameters.AddWithValue("@email", email);
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                     {
                         return new UserDTO(
                             (int)reader["ID"],
-                            reader["Naam"]?.ToString() ?? string.Empty,
                             reader["Wachtwoord"]?.ToString() ?? string.Empty,
                             reader["Email"]?.ToString() ?? string.Empty
                         );
@@ -91,7 +89,7 @@ namespace DAL.Repositories
             }
         }
 
-        public void AddUser(string naam, string email, string wachtwoord)
+        public void AddUser(string email, string wachtwoord)
         {
             try
             {
@@ -100,8 +98,7 @@ namespace DAL.Repositories
                     con.Open();
                     string hashedWachtwoord = BCrypt.Net.BCrypt.HashPassword(wachtwoord);
                     SqlCommand cmd = new SqlCommand(
-                        "INSERT INTO Gebruiker (Naam, Email, Wachtwoord) VALUES (@naam, @email, @wachtwoord)", con);
-                    cmd.Parameters.AddWithValue("@naam", naam);
+                        "INSERT INTO Gebruiker (Email, Wachtwoord) VALUES (@email, @wachtwoord)", con);
                     cmd.Parameters.AddWithValue("@email", email);
                     cmd.Parameters.AddWithValue("@wachtwoord", hashedWachtwoord);
                     cmd.ExecuteNonQuery();

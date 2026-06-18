@@ -20,7 +20,6 @@ namespace serviceLibary.Services
             var user = _userRepository.GetByEmail(email);
             if (user == null)
                 return "Er is geen account gevonden met dit e-mailadres.";
-
             string token = Guid.NewGuid().ToString();
             SlaResetTokenOp(user.Id, token);
             return null;
@@ -30,7 +29,6 @@ namespace serviceLibary.Services
         {
             var user = _userRepository.GetByEmail(email);
             if (user == null) return null;
-
             var dto = _repository.GetByGebruikerId(user.Id);
             if (dto == null) return null;
             return MapWachtwoordReset(dto);
@@ -38,6 +36,7 @@ namespace serviceLibary.Services
 
         public void SlaResetTokenOp(int gebruikerId, string token)
         {
+            _repository.VerwijderOudeTokens(gebruikerId);
             WachtwoordResetDTO dto = new WachtwoordResetDTO(
                 id: 0,
                 gebruikerId: gebruikerId,
@@ -74,7 +73,6 @@ namespace serviceLibary.Services
         {
             var dto = _repository.GetByToken(token);
             if (dto == null) return;
-
             _userRepository.UpdateWachtwoord(dto.GebruikerId, nieuwWachtwoord);
             _repository.MarkeerAlsGebruikt(token);
         }

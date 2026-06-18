@@ -17,7 +17,7 @@ namespace serviceLibary.Services
         {
             return _repository.GetBySeizoenId(seizoenId)
                 .Select(dto => MapAflevering(dto))
-                .ToList();
+                .ToList(); 
         }
 
         public AfleveringModel? GetById(int id)

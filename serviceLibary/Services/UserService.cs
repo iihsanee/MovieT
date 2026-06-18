@@ -55,7 +55,6 @@ namespace serviceLibary.Services
         {
             return new UserModel(
                 id: dto.Id,
-                gebruikersnaam: dto.Gebruikersnaam,
                 wachtwoord: dto.Wachtwoord,
                 email: dto.Email
             );

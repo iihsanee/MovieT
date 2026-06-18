@@ -15,7 +15,7 @@ namespace serviceLibary.Services
 
         public List<WatchingListModel> GetByUser(int userId)
         {
-            return _repository.GetByUser(userId)
+            return _repository.GetByUser(userId) 
                 .Select(dto => MapWatchingList(dto))
                 .ToList();
         }

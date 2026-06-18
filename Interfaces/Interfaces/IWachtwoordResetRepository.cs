@@ -1,5 +1,4 @@
 ﻿using DAL.DTO;
-
 namespace Interfaces.Interfaces
 {
     public interface IWachtwoordResetRepository
@@ -8,5 +7,6 @@ namespace Interfaces.Interfaces
         WachtwoordResetDTO? GetByToken(string token);
         void MarkeerAlsGebruikt(string token);
         WachtwoordResetDTO? GetByGebruikerId(int gebruikerId);
+        void VerwijderOudeTokens(int gebruikerId);
     }
 }

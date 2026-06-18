@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using serviceLibary.Models;
-
 namespace unit_test.ModelTesten
 {
     [TestClass]
@@ -11,14 +10,12 @@ namespace unit_test.ModelTesten
         {
             // Arrange
             var id = 1;
-            var naam = "TestGebruiker";
             var wachtwoord = "Wachtwoord123";
             var email = "test@student.fontys.nl";
             // Act
-            var user = new UserModel(id, naam, wachtwoord, email);
+            var user = new UserModel(id, wachtwoord, email);
             // Assert
             Assert.AreEqual(id, user.Id);
-            Assert.AreEqual(naam, user.Gebruikersnaam);
             Assert.AreEqual(wachtwoord, user.Wachtwoord);
             Assert.AreEqual(email, user.Email);
         }
